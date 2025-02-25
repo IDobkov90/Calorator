@@ -1,4 +1,4 @@
-package com.java.example.calorator;
+package com.example.calorator;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
