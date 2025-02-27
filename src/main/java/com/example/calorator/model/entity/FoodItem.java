@@ -19,14 +19,15 @@ public class FoodItem {
     private Long id;
     @Column(nullable = false , unique = true)
     private String name;
-    @Column
+    @Column(nullable = false)
     private double calories;
-    @Column
+    @Column(nullable = false)
     private double protein;
-    @Column
+    @Column(nullable = false)
     private double carbs;
-    @Column
+    @Column(nullable = false)
     private double fat;
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private FoodCategory category;
 }

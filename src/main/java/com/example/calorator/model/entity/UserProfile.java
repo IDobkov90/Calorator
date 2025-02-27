@@ -22,16 +22,19 @@ public class UserProfile {
     private String firstName;
     @Column(nullable = false , name = "last_name")
     private String lastName;
+    @Column(nullable = false)
     private int age;
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Gender gender;
-    @Column
+    @Column(nullable = false)
     private double weight;
-    @Column
+    @Column(nullable = false)
     private double height;
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ActivityLevel activityLevel;
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false , unique = true)
     private User user;
 }
