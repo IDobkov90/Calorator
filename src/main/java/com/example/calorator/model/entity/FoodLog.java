@@ -15,10 +15,8 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FoodLog {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class FoodLog extends BaseEntity {
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -28,16 +26,14 @@ public class FoodLog {
     @Column(nullable = false)
     private LocalDate date;
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false , name = "meal_type"  )
+    @Column(nullable = false, name = "meal_type")
     private MealType mealType;
     @Column(nullable = false)
     private double amount;
-    @Column(nullable = false , name = "total_calories")
+    @Column(nullable = false, name = "total_calories")
     private double totalCalories;
 
-    @PrePersist
-    @PreUpdate
-    private void calculateTotalCalories() {
+    private void calculateCalories() {
         if (foodItem != null && amount > 0) {
             this.totalCalories = foodItem.getCalories() * amount;
         }

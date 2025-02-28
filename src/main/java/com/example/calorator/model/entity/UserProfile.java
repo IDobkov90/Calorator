@@ -14,13 +14,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserProfile {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(nullable = false , name = "first_name")
+public class UserProfile extends BaseEntity {
+
+    @Column(nullable = false, name = "first_name")
     private String firstName;
-    @Column(nullable = false , name = "last_name")
+    @Column(nullable = false, name = "last_name")
     private String lastName;
     @Column(nullable = false)
     private int age;
@@ -35,6 +33,6 @@ public class UserProfile {
     @Column(nullable = false)
     private ActivityLevel activityLevel;
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false , unique = true)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 }
