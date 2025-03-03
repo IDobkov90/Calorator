@@ -5,4 +5,5 @@ import com.example.calorator.model.dto.UserRegisterDTO;
 
 public interface UserService {
     UserDTO register(UserRegisterDTO userRegisterDTO);
+    boolean existsByUsernameOrEmail(String username, String email);
 }

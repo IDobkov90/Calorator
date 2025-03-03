@@ -24,13 +24,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO register(UserRegisterDTO userRegisterDTO) {
-        if (!userRegisterDTO.getPassword().equals(userRegisterDTO.getConfirmPassword())) {
-            throw new IllegalArgumentException("Passwords do not match");
-        }
-
-        if (userRepository.existsByUsernameOrEmail(userRegisterDTO.getUsername(), userRegisterDTO.getEmail())) {
-            throw new IllegalArgumentException("Username or email already exists");
-        }
         User user = userMapper.toUser(userRegisterDTO);
         user.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
 
@@ -48,5 +41,10 @@ public class UserServiceImpl implements UserService {
         user.setUserProfile(userProfile);
         userRepository.save(user);
         return userMapper.toUserDTO(user);
+    }
+
+    @Override
+    public boolean existsByUsernameOrEmail(String username, String email) {
+        return userRepository.existsByUsernameOrEmail(username, email);
     }
 }

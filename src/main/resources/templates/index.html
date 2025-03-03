@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Home')}"></head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: messages}"></div>
+
+<main class="flex-grow-1">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Track Your Calories Easily with Calorator</h1>
+                <p class="lead mb-4">Calorator helps you monitor your daily calorie intake, track your nutrition, and achieve your health goals.</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4 mb-lg-3" sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/register}" class="btn btn-primary btn-lg px-4 me-md-2">Get Started</a>
+                    <a th:href="@{/login}" class="btn btn-outline-secondary btn-lg px-4">Sign In</a>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <a th:href="@{/dashboard}" class="btn btn-success btn-lg px-4">Go to Dashboard</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://via.placeholder.com/600x400?text=Calorator" class="img-fluid rounded shadow" alt="Calorator">
+            </div>
+        </div>
+
+        <div class="row py-5">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Track Calories</h5>
+                        <p class="card-text">Log your meals and track your daily calorie intake easily with our intuitive interface.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Set Goals</h5>
+                        <p class="card-text">Set personalized calorie and nutrition goals based on your activity level and preferences.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Generate Reports</h5>
+                        <p class="card-text">Get detailed reports and insights about your nutrition habits and progress.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>
