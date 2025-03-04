@@ -1,9 +1,17 @@
 package com.example.calorator.repository;
 
 import com.example.calorator.model.entity.FoodItem;
+import com.example.calorator.model.enums.FoodCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public interface FoodItemRepository extends JpaRepository<FoodItem, Long> { // Define the interface with CRUD operations{
+public interface FoodItemRepository extends JpaRepository<FoodItem, Long> {
+    List<FoodItem> findByCategory(FoodCategory category);
+
+    List<FoodItem> findByNameContainingIgnoreCase(String name);
+
+    boolean existsByNameIgnoreCase(String name);// Define the interface with CRUD operations{
 }
