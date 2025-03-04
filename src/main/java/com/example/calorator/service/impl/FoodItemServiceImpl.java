@@ -95,7 +95,7 @@ public class FoodItemServiceImpl implements FoodItemService {
 
     private void validateNutritionalValues(FoodItemDTO dto) {
         double totalGrams = dto.getProtein() + dto.getCarbs() + dto.getFat();
-        if (dto.getServingUnit() == ServingUnit.GRAM && totalGrams > dto.getServingSize()) {
+        if ("GRAM".equalsIgnoreCase(dto.getServingUnit()) && totalGrams > dto.getServingSize()) {
             throw new IllegalArgumentException("Total macronutrients cannot exceed serving size");
         }
         double calculatedCalories = (dto.getProtein() * 4) + (dto.getCarbs() * 4) + (dto.getFat() * 9);

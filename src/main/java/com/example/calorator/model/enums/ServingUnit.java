@@ -16,4 +16,21 @@ public enum ServingUnit {
 
     private final String abbreviation;
 
+    public static ServingUnit fromAbbreviation(String abbreviation) {
+        if (abbreviation == null) {
+            return null;
+        }
+
+        for (ServingUnit unit : ServingUnit.values()) {
+            if (unit.getAbbreviation().equalsIgnoreCase(abbreviation)) {
+                return unit;
+            }
+        }
+
+        try {
+            return ServingUnit.valueOf(abbreviation.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
 }
