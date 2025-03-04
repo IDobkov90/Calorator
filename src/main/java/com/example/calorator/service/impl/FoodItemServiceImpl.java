@@ -9,6 +9,8 @@ import com.example.calorator.repository.FoodItemRepository;
 import com.example.calorator.service.FoodItemService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,12 @@ public class FoodItemServiceImpl implements FoodItemService {
 
     private final FoodItemRepository foodItemRepository;
     private final FoodItemMapper foodItemMapper;
+
+    @Override
+    public Page<FoodItemDTO> getAllFoodItems(Pageable pageable) {
+        Page<FoodItem> foodItemPage = foodItemRepository.findAll(pageable);
+        return foodItemPage.map(foodItemMapper::toDto);
+    }
 
     @Override
     @Transactional(readOnly = true)
