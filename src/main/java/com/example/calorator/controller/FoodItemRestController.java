@@ -14,7 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/food-items")
@@ -54,10 +57,15 @@ public class FoodItemRestController {
     }
 
     @GetMapping("/categories")
-    public ResponseEntity<List<String>> getAllCategories() {
-        List<String> categories = Arrays.stream(FoodCategory.values())
-                .map(Enum::name)
-                .toList();
+    public ResponseEntity<List<Map<String, String>>> getAllCategories() {
+        List<Map<String, String>> categories = Arrays.stream(FoodCategory.values())
+                .map(category -> {
+                    Map<String, String> categoryMap = new HashMap<>();
+                    categoryMap.put("name", category.name());
+                    categoryMap.put("displayName", category.getDisplayName());
+                    return categoryMap;
+                })
+                .collect(Collectors.toList());
         return ResponseEntity.ok(categories);
     }
 

@@ -1,5 +1,10 @@
 package com.example.calorator.model.enums;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum FoodCategory {
     FRUITS("Fruits"),
     VEGETABLES("Vegetables"),
@@ -13,7 +18,4 @@ public enum FoodCategory {
 
     private final String displayName;
 
-    FoodCategory(String displayName) {
-        this.displayName = displayName;
-    }
 }

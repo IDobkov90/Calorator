@@ -1,8 +1,10 @@
 package com.example.calorator.model.enums;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor
 public enum ActivityLevel {
     SEDENTARY(1.2, "Little or no exercise"),
     LIGHTLY_ACTIVE(1.375, "Light exercise 1-3 days/week"),
@@ -13,8 +15,5 @@ public enum ActivityLevel {
     private final double factor;
     private final String description;
 
-    ActivityLevel(double factor, String description) {
-        this.factor = factor;
-        this.description = description;
-    }
+
 }

@@ -60,7 +60,7 @@ public class FoodItemServiceImpl implements FoodItemService {
             throw new IllegalArgumentException("A food item with this name already exists");
         }
         validateNutritionalValues(foodItemDTO);
-
+        foodItemDTO.setId(null);
         FoodItem foodItem = foodItemMapper.toEntity(foodItemDTO);
         foodItem = foodItemRepository.save(foodItem);
         return foodItemMapper.toDto(foodItem);
@@ -73,12 +73,16 @@ public class FoodItemServiceImpl implements FoodItemService {
             throw new IllegalArgumentException("ID cannot be null for update operation");
         }
 
-        return foodItemRepository.findById(foodItemDTO.getId())
-                .map(existingItem -> {
-                    FoodItem updatedItem = foodItemMapper.toEntity(foodItemDTO);
-                    return foodItemMapper.toDto(foodItemRepository.save(updatedItem));
-                })
+        FoodItem existingItem = foodItemRepository.findById(foodItemDTO.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Food item not found with id: " + foodItemDTO.getId()));
+
+        validateNutritionalValues(foodItemDTO);
+
+        foodItemMapper.updateEntityFromDto(foodItemDTO, existingItem);
+
+        FoodItem savedItem = foodItemRepository.save(existingItem);
+
+        return foodItemMapper.toDto(savedItem);
     }
 
     @Override

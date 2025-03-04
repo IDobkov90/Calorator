@@ -61,6 +61,9 @@ public class SecurityConfig {
                         .tokenValiditySeconds(86400)
                         .rememberMeParameter("remember-me")
                         .userDetailsService(customUserDetailsService)
+                )
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/**")
                 );
         return http.build();
     }

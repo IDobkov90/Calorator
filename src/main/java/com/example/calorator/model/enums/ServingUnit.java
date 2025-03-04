@@ -1,5 +1,10 @@
 package com.example.calorator.model.enums;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum ServingUnit {
     GRAM("g"),
     MILLILITER("ml"),
@@ -11,11 +16,4 @@ public enum ServingUnit {
 
     private final String abbreviation;
 
-    ServingUnit(String abbreviation) {
-        this.abbreviation = abbreviation;
-    }
-
-    public String getAbbreviation() {
-        return abbreviation;
-    }
 }
