@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/layout :: head(title='Edit Food Item')">
+    <title>Edit Food Item</title>
+</head>
+<body>
+<nav th:replace="fragments/layout :: nav"></nav>
+<div th:replace="fragments/layout :: messages"></div>
+
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="mb-0">Edit Food Item</h2>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/food-items/edit/{id}(id=${foodItem.id})}" th:object="${foodItem}" method="post">
+                        <input type="hidden" th:field="*{id}">
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                            <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="category" class="form-label">Category</label>
+                                <select class="form-select" id="category" th:field="*{category}" required>
+                                    <option value="">-- Select Category --</option>
+                                    <option th:each="categoryOption : ${categories}"
+                                            th:value="${categoryOption}"
+                                            th:text="${categoryOption.name()}"
+                                            th:selected="${categoryOption == foodItem.category}">Category</option>
+                                </select>
+                                <div class="text-danger" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="calories" class="form-label">Calories (per serving)</label>
+                                <input type="number" class="form-control" id="calories" th:field="*{calories}"
+                                       step="0.1" min="0" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('calories')}" th:errors="*{calories}"></div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="protein" class="form-label">Protein (g)</label>
+                                <input type="number" class="form-control" id="protein" th:field="*{protein}"
+                                       step="0.1" min="0" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('protein')}" th:errors="*{protein}"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="carbs" class="form-label">Carbs (g)</label>
+                                <input type="number" class="form-control" id="carbs" th:field="*{carbs}"
+                                       step="0.1" min="0" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('carbs')}" th:errors="*{carbs}"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="fat" class="form-label">Fat (g)</label>
+                                <input type="number" class="form-control" id="fat" th:field="*{fat}"
+                                       step="0.1" min="0" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('fat')}" th:errors="*{fat}"></div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="servingSize" class="form-label">Serving Size</label>
+                                <input type="number" class="form-control" id="servingSize" th:field="*{servingSize}"
+                                       step="0.1" min="0" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('servingSize')}" th:errors="*{servingSize}"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="servingUnit" class="form-label">Serving Unit</label>
+                                <select class="form-select" id="servingUnit" th:field="*{servingUnit}" required>
+                                    <option value="">-- Select Unit --</option>
+                                    <option th:each="unitOption : ${servingUnits}"
+                                            th:value="${unitOption}"
+                                            th:text="${unitOption.name()}"
+                                            th:selected="${unitOption == foodItem.servingUnit}">Unit</option>
+                                </select>
+                                <div class="text-danger" th:if="${#fields.hasErrors('servingUnit')}" th:errors="*{servingUnit}"></div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a th:href="@{/food-items}" class="btn btn-secondary me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Update Food Item</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="fragments/layout :: footer"></footer>
+<div th:replace="fragments/layout :: scripts"></div>
+</body>
+</html>

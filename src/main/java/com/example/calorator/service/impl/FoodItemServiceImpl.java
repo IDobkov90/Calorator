@@ -93,6 +93,12 @@ public class FoodItemServiceImpl implements FoodItemService {
         foodItemRepository.deleteById(id);
     }
 
+    @Override
+    public Page<FoodItemDTO> getFoodItemsByCategory(FoodCategory category, Pageable pageable) {
+        Page<FoodItem> foodItemPage = foodItemRepository.findByCategory(category, pageable);
+        return foodItemPage.map(foodItemMapper::toDto);
+    }
+
     private void validateNutritionalValues(FoodItemDTO dto) {
         double totalGrams = dto.getProtein() + dto.getCarbs() + dto.getFat();
         if ("GRAM".equalsIgnoreCase(dto.getServingUnit()) && totalGrams > dto.getServingSize()) {
