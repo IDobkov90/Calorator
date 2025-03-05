@@ -16,11 +16,11 @@ public interface FoodItemService {
 
     List<FoodItemDTO> getFoodItemsByCategory(FoodCategory category);
 
+    Page<FoodItemDTO> getFoodItemsByCategory(FoodCategory category, Pageable pageable);
+
     FoodItemDTO createFoodItem(FoodItemDTO foodItemDTO);
 
     FoodItemDTO updateFoodItem(FoodItemDTO foodItemDTO);
 
     void deleteFoodItem(Long id);
-
-    Page<FoodItemDTO> getFoodItemsByCategory(FoodCategory category, Pageable pageable);
 }

@@ -17,7 +17,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/food-items")
@@ -27,8 +31,15 @@ public class FoodItemController {
     private final FoodItemService foodItemService;
 
     @ModelAttribute("categories")
-    public FoodCategory[] getCategories() {
-        return FoodCategory.values();
+    public List<Map<String, String>> getCategories() {
+        return Arrays.stream(FoodCategory.values())
+                .map(category -> {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("name", category.name());
+                    map.put("displayName", category.getDisplayName());
+                    return map;
+                })
+                .toList();
     }
 
     @ModelAttribute("servingUnits")
@@ -45,22 +56,20 @@ public class FoodItemController {
             @RequestParam(defaultValue = "asc") String direction,
             @RequestParam(required = false) String category,
             Model model) {
-        
-        // Convert the category string to FoodCategory enum if it's not null
+
         FoodCategory foodCategory = null;
         if (category != null && !category.isEmpty()) {
             try {
                 foodCategory = FoodCategory.valueOf(category.toUpperCase());
             } catch (IllegalArgumentException e) {
-                // Handle invalid category parameter
-                // You could redirect to an error page or just ignore and show all items
+                model.addAttribute("errorMessage", "Invalid category: " + category);
             }
         }
-
+    
         Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? 
                                       Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, sortDirection, sort);
-
+    
         Page<FoodItemDTO> foodItems;
         if (foodCategory != null) {
             foodItems = foodItemService.getFoodItemsByCategory(foodCategory, pageable);
@@ -71,7 +80,9 @@ public class FoodItemController {
         model.addAttribute("foodItems", foodItems);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", foodItems.getTotalPages());
-        model.addAttribute("selectedCategory", foodCategory); // Pass the enum object, not just the string
+        model.addAttribute("selectedCategory", category);
+        model.addAttribute("sort", sort);
+        model.addAttribute("direction", direction);
         
         return "food-items/list";
     }
@@ -91,7 +102,7 @@ public class FoodItemController {
     }
 
     @GetMapping("/create")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public String showCreateForm(Model model) {
         if (!model.containsAttribute("foodItem")) {
             model.addAttribute("foodItem", new FoodItemDTO());
@@ -102,7 +113,7 @@ public class FoodItemController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public String createFoodItem(@Valid @ModelAttribute("foodItem") FoodItemDTO foodItemDTO,
                                  BindingResult bindingResult,
                                  RedirectAttributes redirectAttributes,
@@ -125,7 +136,7 @@ public class FoodItemController {
     }
 
     @GetMapping("/edit/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public String showEditForm(@PathVariable Long id, Model model) {
         try {
             FoodItemDTO foodItem = foodItemService.getFoodItemById(id);
@@ -139,7 +150,7 @@ public class FoodItemController {
     }
 
     @PostMapping("/edit/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public String updateFoodItem(@PathVariable Long id,
                                  @Valid @ModelAttribute("foodItem") FoodItemDTO foodItemDTO,
                                  BindingResult bindingResult,

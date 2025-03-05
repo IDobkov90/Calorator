@@ -13,9 +13,9 @@ import java.util.List;
 public interface FoodItemRepository extends JpaRepository<FoodItem, Long> {
     List<FoodItem> findByCategory(FoodCategory category);
 
+    Page<FoodItem> findByCategory(FoodCategory category, Pageable pageable);
+
     List<FoodItem> findByNameContainingIgnoreCase(String name);
 
     boolean existsByNameIgnoreCase(String name);
-
-    Page<FoodItem> findByCategory(FoodCategory category, Pageable pageable);
 }

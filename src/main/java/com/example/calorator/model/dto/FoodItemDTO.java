@@ -1,5 +1,6 @@
 package com.example.calorator.model.dto;
 
+import com.example.calorator.model.enums.FoodCategory;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -21,10 +22,10 @@ public class FoodItemDTO {
     @Positive(message = "Calories must be positive")
     private Double calories;
     @NotNull(message = "Protein content is required")
-    @PositiveOrZero (message = "Protein must be zero or positive")
+    @PositiveOrZero(message = "Protein must be zero or positive")
     private Double protein;
     @NotNull(message = "Carbs content is required")
-    @PositiveOrZero (message = "Carbs must be zero or positive")
+    @PositiveOrZero(message = "Carbs must be zero or positive")
     private Double carbs;
     @NotNull(message = "Fat content is required")
     @PositiveOrZero(message = "Fat must be zero or positive")
@@ -36,4 +37,12 @@ public class FoodItemDTO {
     private String servingUnit;
     @NotNull(message = "Category is required")
     private String category;
+
+    public String getCategoryDisplayName() {
+        try {
+            return FoodCategory.fromString(category).getDisplayName();
+        } catch (Exception e) {
+            return category;
+        }
+    }
 }

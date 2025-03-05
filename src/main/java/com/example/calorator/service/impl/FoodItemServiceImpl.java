@@ -4,7 +4,6 @@ import com.example.calorator.mapper.FoodItemMapper;
 import com.example.calorator.model.dto.FoodItemDTO;
 import com.example.calorator.model.entity.FoodItem;
 import com.example.calorator.model.enums.FoodCategory;
-import com.example.calorator.model.enums.ServingUnit;
 import com.example.calorator.repository.FoodItemRepository;
 import com.example.calorator.service.FoodItemService;
 import jakarta.persistence.EntityNotFoundException;
@@ -94,6 +93,7 @@ public class FoodItemServiceImpl implements FoodItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<FoodItemDTO> getFoodItemsByCategory(FoodCategory category, Pageable pageable) {
         Page<FoodItem> foodItemPage = foodItemRepository.findByCategory(category, pageable);
         return foodItemPage.map(foodItemMapper::toDto);

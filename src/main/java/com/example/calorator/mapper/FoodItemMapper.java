@@ -9,12 +9,25 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface FoodItemMapper {
+    
+    @Mapping(source = "category", target = "category")
+    @Mapping(source = "servingUnit", target = "servingUnit")
+    FoodItem toEntity(FoodItemDTO dto);
+    
+    @Mapping(source = "category", target = "category")
+    @Mapping(source = "servingUnit", target = "servingUnit")
     FoodItemDTO toDto(FoodItem entity);
-
+    
+    default FoodCategory mapFoodCategory(String value) {
+        return FoodCategory.fromString(value);
+    }
+    
+    default String map(FoodCategory category) {
+        return category != null ? category.name() : null;
+    }
+    
     default ServingUnit mapServingUnit(String servingUnitStr) {
         if (servingUnitStr == null || servingUnitStr.isEmpty()) {
             return null;
@@ -32,24 +45,11 @@ public interface FoodItemMapper {
             throw new IllegalArgumentException("Invalid serving unit: " + servingUnitStr);
         }
     }
-
-    default FoodCategory mapFoodCategory(String value) {
-        return FoodCategory.valueOf(value.toUpperCase());
+    
+    default String map(ServingUnit servingUnit) {
+        return servingUnit != null ? servingUnit.name() : null;
     }
 
-    default String map(ServingUnit unit) {
-        return unit.name();
-    }
-
-    default String map(FoodCategory category) {
-        return category.name();
-    }
-
-    @Mapping(target = "servingUnit", source = "servingUnit")
-    @Mapping(target = "category", source = "category")
-    FoodItem toEntity(FoodItemDTO dto);
-
+    @Mapping(target = "id", ignore = true)
     void updateEntityFromDto(FoodItemDTO dto, @MappingTarget FoodItem entity);
-
-    List<FoodItemDTO> toDtoList(List<FoodItem> entities);
 }

@@ -17,5 +17,21 @@ public enum FoodCategory {
     OTHER("Other");
 
     private final String displayName;
-
+    
+    public static FoodCategory fromString(String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
+        
+        try {
+            return FoodCategory.valueOf(value.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            for (FoodCategory category : FoodCategory.values()) {
+                if (category.getDisplayName().equalsIgnoreCase(value)) {
+                    return category;
+                }
+            }
+            throw new IllegalArgumentException("Invalid food category: " + value);
+        }
+    }
 }
