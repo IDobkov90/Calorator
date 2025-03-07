@@ -1,11 +1,19 @@
 package com.example.calorator.controller;
 
+import com.example.calorator.model.dto.FoodItemDTO;
 import com.example.calorator.model.dto.UserRegisterDTO;
 import com.example.calorator.model.enums.ActivityLevel;
+import com.example.calorator.model.enums.FoodCategory;
 import com.example.calorator.model.enums.Gender;
+import com.example.calorator.service.FoodItemService;
 import com.example.calorator.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final FoodItemService foodItemService;
     private static final String USER_REGISTER_DTO = "userRegisterDTO";
 
     @ModelAttribute(USER_REGISTER_DTO)
@@ -68,7 +77,15 @@ public class UserController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard() {
+    @PreAuthorize("isAuthenticated()")
+    public String dashboard(Model model) {
+
+        model.addAttribute("foodCategories", FoodCategory.values());
+
+        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "id"));
+        Page<FoodItemDTO> recentFoodItems = foodItemService.getAllFoodItems(pageable);
+        model.addAttribute("recentFoodItems", recentFoodItems.getContent());
+        
         return "user/dashboard";
     }
 }

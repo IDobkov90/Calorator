@@ -184,4 +184,17 @@ public class FoodItemController {
         }
         return "redirect:/food-items";
     }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String viewFoodItem(@PathVariable Long id, Model model) {
+        try {
+            FoodItemDTO foodItem = foodItemService.getFoodItemById(id);
+            model.addAttribute("foodItem", foodItem);
+            return "food-items/view";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Food item not found");
+            return "redirect:/food-items";
+        }
+    }
 }

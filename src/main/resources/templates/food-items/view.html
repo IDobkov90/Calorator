@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('View Food Item')}"></head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: messages}"></div>
+
+<main class="flex-grow-1">
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Food Item Details</h1>
+            <div>
+                <a href="/food-items" class="btn btn-outline-secondary">Back to List</a>
+                <a th:href="@{/food-items/edit/{id}(id=${foodItem.id})}" class="btn btn-outline-warning" sec:authorize="isAuthenticated()">Edit</a>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <

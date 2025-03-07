@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+<head th:replace="~{fragments/layout :: head('User Dashboard')}"></head>
 <body class="d-flex flex-column min-vh-100">
 
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
@@ -8,126 +8,84 @@
 
 <main class="flex-grow-1">
     <div class="container py-5">
-        <h1 class="mb-4">Dashboard</h1>
+        <h1 class="mb-4">User Dashboard</h1>
 
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="card shadow-sm mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Daily Calories</h5>
-                        <h2 class="display-4 fw-bold text-center">1,200</h2>
-                        <p class="text-muted text-center">of 2,000 goal</p>
-                        <div class="progress">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 60%"></div>
+        <!-- Food Items Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Food Database</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6>Quick Actions:</h6>
+                        <div class="d-flex gap-2">
+                            <a href="/food-items" class="btn btn-outline-primary">Browse All Foods</a>
+                            <a href="/food-items/create" class="btn btn-outline-success">Add New Food</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Filter by Category:</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a th:each="category : ${foodCategories}"
+                               th:href="@{/food-items(category=${category})}"
+                               th:text="${category.name()}"
+                               class="btn btn-sm btn-outline-secondary"></a>
                         </div>
                     </div>
                 </div>
+
+                <!-- Recent Food Items -->
+                <h6>Recently Added Foods:</h6>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Calories</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${recentFoodItems}">
+                                <td th:text="${item.name}">Food Name</td>
+                                <td th:text="${item.category}">Category</td>
+                                <td th:text="${item.calories}">Calories</td>
+                                <td>
+                                    <a th:href="@{/food-items/{id}(id=${item.id})}" class="btn btn-sm btn-outline-info">View</a>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(recentFoodItems)}">
+                                <td colspan="4" class="text-center">No food items found</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-end">
+                    <a href="/food-items" class="btn btn-link">View all food items →</a>
+                </div>
             </div>
-            <div class="col-md-8">
-                <div class="card shadow-sm">
+        </div>
+
+            <!-- Add other dashboard cards here -->
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="card-title mb-0">My Nutrition</h5>
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">Nutrition Breakdown</h5>
-                        <div class="row text-center">
-                            <div class="col-4">
-                                <h5>Protein</h5>
-                                <p class="mb-1">45g</p>
-                                <div class="progress">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 45%"></div>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <h5>Carbs</h5>
-                                <p class="mb-1">150g</p>
-                                <div class="progress">
-                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 65%"></div>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <h5>Fats</h5>
-                                <p class="mb-1">35g</p>
-                                <div class="progress">
-                                    <div class="progress-bar bg-danger" role="progressbar" style="width: 40%"></div>
-                                </div>
-                            </div>
+                        <p class="card-text">Track your daily nutrition and calorie intake.</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a href="#" class="btn btn-outline-success">Daily Log</a>
+                            <a href="#" class="btn btn-outline-primary">Nutrition Reports</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-8">
-                <div class="card shadow-sm">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Recent Food Logs</h5>
-                        <a href="#" class="btn btn-sm btn-primary">Add Food</a>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Food</th>
-                                    <th>Amount</th>
-                                    <th>Calories</th>
-                                    <th>Time</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>Chicken Breast</td>
-                                    <td>200g</td>
-                                    <td>330</td>
-                                    <td>12:30 PM</td>
-                                </tr>
-                                <tr>
-                                    <td>Brown Rice</td>
-                                    <td>150g</td>
-                                    <td>170</td>
-                                    <td>12:30 PM</td>
-                                </tr>
-                                <tr>
-                                    <td>Broccoli</td>
-                                    <td>100g</td>
-                                    <td>55</td>
-                                    <td>12:30 PM</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="card-footer text-end">
-                        <a href="#" class="btn btn-link">View All</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card shadow-sm">
-                    <div class="card-header">
-                        <h5 class="mb-0">My Goals</h5>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Daily Calorie Goal
-                                <span class="badge bg-primary rounded-pill">2,000</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Weight Goal
-                                <span class="badge bg-success rounded-pill">75 kg</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Protein Goal
-                                <span class="badge bg-info rounded-pill">100g</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-footer text-end">
-                        <a href="#" class="btn btn-sm btn-outline-primary">Edit Goals</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Additional dashboard content can be added here -->
     </div>
 </main>
 
