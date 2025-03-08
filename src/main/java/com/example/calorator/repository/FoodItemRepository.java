@@ -18,4 +18,6 @@ public interface FoodItemRepository extends JpaRepository<FoodItem, Long> {
     List<FoodItem> findByNameContainingIgnoreCase(String name);
 
     boolean existsByNameIgnoreCase(String name);
+
+    Page<FoodItem> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }

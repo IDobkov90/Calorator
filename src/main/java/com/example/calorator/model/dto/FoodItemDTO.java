@@ -1,6 +1,7 @@
 package com.example.calorator.model.dto;
 
 import com.example.calorator.model.enums.FoodCategory;
+import com.example.calorator.model.enums.ServingUnit;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -43,6 +44,14 @@ public class FoodItemDTO {
             return FoodCategory.fromString(category).getDisplayName();
         } catch (Exception e) {
             return category;
+        }
+    }
+
+    public String getServingUnitDisplayName() {
+        try {
+            return ServingUnit.valueOf(servingUnit).getAbbreviation();
+        } catch (Exception e) {
+            return servingUnit;
         }
     }
 }

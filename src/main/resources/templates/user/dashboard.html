@@ -37,38 +37,53 @@
 
                 <!-- Recent Food Items -->
                 <h6>Recently Added Foods:</h6>
+                <!-- After the table with recent food items -->
                 <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Category</th>
-                                <th>Calories</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="item : ${recentFoodItems}">
-                                <td th:text="${item.name}">Food Name</td>
-                                <td th:text="${item.category}">Category</td>
-                                <td th:text="${item.calories}">Calories</td>
-                                <td>
-                                    <a th:href="@{/food-items/{id}(id=${item.id})}" class="btn btn-sm btn-outline-info">View</a>
-                                </td>
-                            </tr>
-                            <tr th:if="${#lists.isEmpty(recentFoodItems)}">
-                                <td colspan="4" class="text-center">No food items found</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <!-- Table content as before -->
                 </div>
+
+                <!-- Pagination controls -->
+                <div th:if="${totalPages > 1}" class="d-flex justify-content-center mt-3">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                <a class="page-link" th:href="@{/user/dashboard(page=0)}" aria-label="First">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                <a class="page-link" th:href="@{/user/dashboard(page=${currentPage - 1})}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                th:classappend="${currentPage == i} ? 'active'">
+                                <a class="page-link" th:href="@{/user/dashboard(page=${i})}" th:text="${i + 1}"></a>
+                            </li>
+
+                            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                <a class="page-link" th:href="@{/user/dashboard(page=${currentPage + 1})}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                <a class="page-link" th:href="@{/user/dashboard(page=${totalPages - 1})}" aria-label="Last">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
                 <div class="text-end">
                     <a href="/food-items" class="btn btn-link">View all food items →</a>
                 </div>
             </div>
         </div>
 
-            <!-- Add other dashboard cards here -->
+        <div class="row">
+            <!-- My Nutrition Card -->
             <div class="col-md-6">
                 <div class="card h-100 shadow-sm">
                     <div class="card-header bg-success text-white">

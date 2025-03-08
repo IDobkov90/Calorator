@@ -19,6 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FoodItemServiceImpl implements FoodItemService {
 
+    private static final String FOOD_ITEM_NOT_FOUND_MESSAGE = "Food item not found with id: ";
+
     private final FoodItemRepository foodItemRepository;
     private final FoodItemMapper foodItemMapper;
 
@@ -40,7 +42,7 @@ public class FoodItemServiceImpl implements FoodItemService {
     @Transactional(readOnly = true)
     public FoodItemDTO getFoodItemById(Long id) {
         FoodItem foodItem = foodItemRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Food item not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(FOOD_ITEM_NOT_FOUND_MESSAGE + id));
         return foodItemMapper.toDto(foodItem);
     }
 
@@ -73,7 +75,7 @@ public class FoodItemServiceImpl implements FoodItemService {
         }
 
         FoodItem existingItem = foodItemRepository.findById(foodItemDTO.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Food item not found with id: " + foodItemDTO.getId()));
+                .orElseThrow(() -> new EntityNotFoundException(FOOD_ITEM_NOT_FOUND_MESSAGE + foodItemDTO.getId()));
 
         validateNutritionalValues(foodItemDTO);
 
@@ -88,8 +90,15 @@ public class FoodItemServiceImpl implements FoodItemService {
     @Transactional
     public void deleteFoodItem(Long id) {
         foodItemRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Food item not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(FOOD_ITEM_NOT_FOUND_MESSAGE + id));
         foodItemRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<FoodItemDTO> getRecentFoodItems(Pageable pageable) {
+        Page<FoodItem> foodItemPage = foodItemRepository.findAllByOrderByCreatedAtDesc(pageable);
+        return foodItemPage.map(foodItemMapper::toDto);
     }
 
     @Override

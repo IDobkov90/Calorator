@@ -20,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -78,13 +79,19 @@ public class UserController {
 
     @GetMapping("/dashboard")
     @PreAuthorize("isAuthenticated()")
-    public String dashboard(Model model) {
+    public String dashboard(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            Model model) {
 
         model.addAttribute("foodCategories", FoodCategory.values());
 
-        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "id"));
-        Page<FoodItemDTO> recentFoodItems = foodItemService.getAllFoodItems(pageable);
-        model.addAttribute("recentFoodItems", recentFoodItems.getContent());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<FoodItemDTO> recentFoodItemsPage = foodItemService.getRecentFoodItems(pageable);
+        model.addAttribute("recentFoodItems", recentFoodItemsPage.getContent());
+        model.addAttribute("currentPage", recentFoodItemsPage.getNumber());
+        model.addAttribute("totalPages", recentFoodItemsPage.getTotalPages());
+        model.addAttribute("totalItems", recentFoodItemsPage.getTotalElements());
         
         return "user/dashboard";
     }

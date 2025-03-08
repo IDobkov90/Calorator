@@ -1,21 +1,136 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/layout :: head('View Food Item')}"></head>
+<head th:replace="~{fragments/layout :: head('Food Item Details')}"></head>
 <body class="d-flex flex-column min-vh-100">
 
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 <div th:replace="~{fragments/layout :: messages}"></div>
 
 <main class="flex-grow-1">
-    <div class="container py-5">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Food Item Details</h1>
-            <div>
-                <a href="/food-items" class="btn btn-outline-secondary">Back to List</a>
-                <a th:href="@{/food-items/edit/{id}(id=${foodItem.id})}" class="btn btn-outline-warning" sec:authorize="isAuthenticated()">Edit</a>
+    <div class="container my-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/food-items}">Food Database</a></li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${foodItem.name}">Food Item</li>
+            </ol>
+        </nav>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h2 class="mb-0" th:text="${foodItem.name}">Food Item Name</h2>
+                        <span th:if="${foodItem.category != null}" th:text="${T(com.example.calorator.model.enums.FoodCategory).valueOf(foodItem.category).displayName}">Category</span>
+                        <span th:unless="${foodItem.category != null}">Uncategorized</span>
+                    </div>
+                    <div class="card-body">
+                        <!-- Nutritional Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="border-bottom pb-2">Nutritional Information</h4>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between">
+                                    <span class="fw-bold">Serving Size:</span>
+                                    <span th:text="${foodItem.servingSize + ' ' + foodItem.getServingUnitDisplayName()}">100g</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between">
+                                    <span class="fw-bold">Calories:</span>
+                                    <span th:text="${foodItem.calories}">250</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Macronutrients -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="border-bottom pb-2">Macronutrients</h4>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card text-center bg-light mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Protein</h5>
+                                        <p class="card-text display-6" th:text="${foodItem.protein + 'g'}">20g</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card text-center bg-light mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Carbs</h5>
+                                        <p class="card-text display-6" th:text="${foodItem.carbs + 'g'}">30g</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card text-center bg-light mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Fat</h5>
+                                        <p class="card-text display-6" th:text="${foodItem.fat + 'g'}">10g</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Calorie Distribution Chart -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="border-bottom pb-2">Calorie Distribution</h4>
+                                <div class="progress" style="height: 25px;">
+                                    <!-- Calculate percentages based on macronutrients -->
+                                    <div class="progress-bar bg-success" role="progressbar"
+                                         th:style="'width: ' + ${(foodItem.protein * 4 / foodItem.calories) * 100} + '%'"
+                                         th:text="'Protein ' + ${#numbers.formatDecimal((foodItem.protein * 4 / foodItem.calories) * 100, 0, 0)} + '%'">
+                                        Protein 30%
+                                    </div>
+                                    <div class="progress-bar bg-primary" role="progressbar"
+                                         th:style="'width: ' + ${(foodItem.carbs * 4 / foodItem.calories) * 100} + '%'"
+                                         th:text="'Carbs ' + ${#numbers.formatDecimal((foodItem.carbs * 4 / foodItem.calories) * 100, 0, 0)} + '%'">
+                                        Carbs 40%
+                                    </div>
+                                    <div class="progress-bar bg-warning" role="progressbar"
+                                         th:style="'width: ' + ${(foodItem.fat * 9 / foodItem.calories) * 100} + '%'"
+                                         th:text="'Fat ' + ${#numbers.formatDecimal((foodItem.fat * 9 / foodItem.calories) * 100, 0, 0)} + '%'">
+                                        Fat 30%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a th:href="@{/food-items}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Food Database
+                            </a>
+                            <div>
+                                <!-- Add to meal button for all users -->
+                                <button class="btn btn-success me-2">
+                                    <i class="bi bi-plus-circle"></i> Add to Meal
+                                </button>
+
+                                <!-- Edit and Delete buttons only for admins -->
+                                <div class="btn-group" sec:authorize="hasRole('ADMIN')">
+                                    <a th:href="@{/food-items/edit/{id}(id=${foodItem.id})}" class="btn btn-warning">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </a>
+                                    <a th:href="@{/food-items/delete/{id}(id=${foodItem.id})}" class="btn btn-danger"
+                                       onclick="return confirm('Are you sure you want to delete this food item?')">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
+</main>
 
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

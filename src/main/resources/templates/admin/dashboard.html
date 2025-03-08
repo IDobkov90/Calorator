@@ -13,7 +13,7 @@
             <span class="badge bg-danger" sec:authentication="principal.authorities">ROLE_ADMIN</span>
         </div>
 
-        <div class="row">
+        <div class="row mb-4">
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm">
                     <div class="card-body text-center">
@@ -26,46 +26,79 @@
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm">
                     <div class="card-body text-center">
-                        <h5 class="card-title">Food Items</h5>
-                        <p class="display-4 fw-bold">0</p>
+                        <h5 class="card-title">Total Food Items</h5>
+                        <p class="display-4 fw-bold" th:text="${totalFoodItems}">0</p>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Active Users Today</h5>
-                        <p class="display-4 fw-bold">0</p>
-                    </div>
-                </div>
-            </div>
+            <!-- You can add more stat cards here -->
         </div>
 
-        <div class="card shadow-sm">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">System Management</h5>
+        <!-- Food Items Management Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Food Database Management</h5>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <div class="d-grid">
-                            <a href="#" class="btn btn-outline-primary">Manage Users</a>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6>Quick Actions:</h6>
+                        <div class="d-flex gap-2">
+                            <a href="/food-items" class="btn btn-outline-primary">Browse All Foods</a>
+                            <a href="/food-items/create" class="btn btn-outline-success">Add New Food</a>
                         </div>
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="d-grid">
-                            <a href="#" class="btn btn-outline-success">Manage Food Database</a>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="d-grid">
-                            <a href="#" class="btn btn-outline-info">System Reports</a>
+                    <div class="col-md-6">
+                        <h6>Filter by Category:</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a th:each="category : ${foodCategories}"
+                               th:href="@{/food-items(category=${category})}"
+                               th:text="${category.name()}"
+                               class="btn btn-sm btn-outline-secondary"></a>
                         </div>
                     </div>
                 </div>
+
+                <!-- Recent Food Items -->
+                <h6>Recently Added Foods:</h6>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Calories</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${recentFoodItems}">
+                                <td th:text="${item.name}">Food Name</td>
+                                <td th:text="${item.category}">Category</td>
+                                <td th:text="${item.calories}">Calories</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a th:href="@{/food-items/{id}(id=${item.id})}" class="btn btn-outline-info">View</a>
+                                        <a th:href="@{/food-items/edit/{id}(id=${item.id})}" class="btn btn-outline-warning">Edit</a>
+                                        <a th:href="@{/food-items/delete/{id}(id=${item.id})}" class="btn btn-outline-danger"
+                                           onclick="return confirm('Are you sure you want to delete this food item?')">Delete</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(recentFoodItems)}">
+                                <td colspan="4" class="text-center">No food items found</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-end">
+                    <a href="/food-items" class="btn btn-link">Manage all food items →</a>
+                </div>
             </div>
         </div>
+
+        <!-- Additional admin dashboard sections can be added here -->
     </div>
 </main>
 

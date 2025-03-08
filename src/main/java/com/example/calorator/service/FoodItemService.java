@@ -23,4 +23,6 @@ public interface FoodItemService {
     FoodItemDTO updateFoodItem(FoodItemDTO foodItemDTO);
 
     void deleteFoodItem(Long id);
+
+    Page<FoodItemDTO> getRecentFoodItems(Pageable pageable);
 }
