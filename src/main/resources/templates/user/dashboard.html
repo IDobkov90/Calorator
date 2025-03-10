@@ -36,10 +36,49 @@
                 </div>
 
                 <!-- Recent Food Items -->
-                <h6>Recently Added Foods:</h6>
-                <!-- After the table with recent food items -->
-                <div class="table-responsive">
-                    <!-- Table content as before -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Recently Added Foods</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Calories</th>
+                                    <th>Serving</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="item : ${recentFoodItems}">
+                                    <td th:text="${item.name}">Food Name</td>
+                                    <td th:text="${item.categoryDisplayName}">Category</td>
+                                    <td th:text="${item.calories}">Calories</td>
+                                    <td>
+                                        <span th:text="${item.servingSize}">100</span>
+                                        <span th:text="${item.servingUnit}">g</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a th:href="@{/food-items/{id}(id=${item.id})}" class="btn btn-outline-info">View</a>
+                                            <a th:href="@{/food-items/edit/{id}(id=${item.id})}" class="btn btn-outline-warning">Edit</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${recentFoodItems == null || recentFoodItems.isEmpty()}">
+                                    <td colspan="5" class="text-center">No food items found</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-end mt-2">
+                            <a th:href="@{/food-items}" class="btn btn-primary">View All Foods</a>
+                            <a th:href="@{/food-items/create}" class="btn btn-success">Add New Food</a>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Pagination controls -->
