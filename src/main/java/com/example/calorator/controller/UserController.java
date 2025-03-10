@@ -1,6 +1,7 @@
 package com.example.calorator.controller;
 
 import com.example.calorator.model.dto.FoodItemDTO;
+import com.example.calorator.model.dto.PasswordChangeDTO;
 import com.example.calorator.model.dto.UserRegisterDTO;
 import com.example.calorator.model.enums.ActivityLevel;
 import com.example.calorator.model.enums.FoodCategory;
@@ -23,16 +24,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
+
 @Controller
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
     private final FoodItemService foodItemService;
     private static final String USER_REGISTER_DTO = "userRegisterDTO";
+    private static final String PASSWORD_CHANGE_DTO = "passwordChangeDTO";
 
     @ModelAttribute(USER_REGISTER_DTO)
     public UserRegisterDTO userRegisterDTO() {
         return new UserRegisterDTO();
+    }
+    @ModelAttribute(PASSWORD_CHANGE_DTO)
+    public PasswordChangeDTO passwordChangeDTO() {
+        return new PasswordChangeDTO();
     }
 
     @GetMapping("/register")
@@ -94,5 +102,44 @@ public class UserController {
         model.addAttribute("totalItems", recentFoodItemsPage.getTotalElements());
         
         return "user/dashboard";
+    }
+
+    @GetMapping("/settings")
+    @PreAuthorize("isAuthenticated()")
+    public String showSettingsPage() {
+        return "user/settings";
+    }
+    
+    @GetMapping("/settings/change-password")
+    @PreAuthorize("isAuthenticated()")
+    public String showChangePasswordForm(Model model) {
+        model.addAttribute(PASSWORD_CHANGE_DTO, passwordChangeDTO());
+        return "user/change-password";
+    }
+    
+    @PostMapping("/settings/change-password")
+    @PreAuthorize("isAuthenticated()")
+    public String changePassword(
+            @Valid PasswordChangeDTO passwordChangeDTO,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            Principal principal) {
+        
+        if (bindingResult.hasErrors()) {
+            return "user/change-password";
+        }
+        
+        try {
+            userService.changePassword(
+                    principal.getName(),
+                    passwordChangeDTO.getCurrentPassword(),
+                    passwordChangeDTO.getNewPassword()
+            );
+            redirectAttributes.addFlashAttribute("success", "Password changed successfully!");
+            return "redirect:/dashboard";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to change password: " + e.getMessage());
+            return "redirect:/settings/change-password";
+        }
     }
 }

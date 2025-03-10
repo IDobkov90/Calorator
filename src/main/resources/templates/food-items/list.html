@@ -13,9 +13,10 @@
         <h3>Filter by Category</h3>
         <div class="d-flex flex-wrap gap-2">
             <a th:each="category : ${T(com.example.calorator.model.enums.FoodCategory).values()}"
-               th:href="@{/food-items/list(category=${category})}"
+               th:href="@{/food-items(category=${category})}"
                th:text="${category.displayName}"
-               class="btn btn-outline-primary"></a>
+               th:class="${category == selectedCategory ? 'btn btn-primary' : 'btn btn-outline-primary'}"></a>
+            <a th:href="@{/food-items}" class="btn btn-outline-secondary">Clear Filter</a>
         </div>
     </div>
 
@@ -45,6 +46,7 @@
 </main>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
 
 </body>
 </html>
