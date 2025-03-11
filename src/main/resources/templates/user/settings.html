@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/layout :: head('User Settings')}"></head>
 <body class="d-flex flex-column min-vh-100">
 
@@ -15,6 +15,7 @@
                         <h5 class="card-title mb-0">Settings</h5>
                     </div>
                     <div class="list-group list-group-flush">
+                        <a th:href="@{/profile}" class="list-group-item list-group-item-action">Profile</a>
                         <a th:href="@{/settings/change-password}" class="list-group-item list-group-item-action">Change Password</a>
                     </div>
                 </div>

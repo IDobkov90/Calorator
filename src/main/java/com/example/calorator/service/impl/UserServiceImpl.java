@@ -2,15 +2,19 @@ package com.example.calorator.service.impl;
 
 import com.example.calorator.mapper.UserMapper;
 import com.example.calorator.model.dto.UserDTO;
+import com.example.calorator.model.dto.UserProfileDTO;
 import com.example.calorator.model.dto.UserRegisterDTO;
 import com.example.calorator.model.entity.User;
 import com.example.calorator.model.entity.UserProfile;
+import com.example.calorator.model.enums.Gender;
 import com.example.calorator.model.enums.UserRole;
 import com.example.calorator.repository.UserProfileRepository;
 import com.example.calorator.repository.UserRepository;
 import com.example.calorator.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.Context;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -61,5 +65,52 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
+    }
+
+    @Override
+    public UserProfileDTO getUserProfile(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+    
+        UserProfile profile = user.getUserProfile();
+    
+        return UserProfileDTO.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .firstName(profile.getFirstName())
+                .lastName(profile.getLastName())
+                .gender(profile.getGender())
+                .age(profile.getAge())
+                .height(profile.getHeight())
+                .weight(profile.getWeight())
+                .activityLevel(profile.getActivityLevel())
+                .dailyCalorieGoal(calculateDailyCalorieGoal(profile))
+                .build();
+    }
+
+    @Override
+    public Page<UserDTO> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(userMapper::toUserDTO);
+    }
+
+    @Override
+    public UserDTO getUserByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+        return userMapper.toUserDTO(user);
+    }
+
+    private Integer calculateDailyCalorieGoal(UserProfile profile) {
+        double bmr;
+        if (profile.getGender() == Gender.MALE) {
+            bmr = 88.362 + (13.397 * profile.getWeight()) + (4.799 * profile.getHeight()) - (5.677 * profile.getAge());
+        } else {
+            bmr = 447.593 + (9.247 * profile.getWeight()) + (3.098 * profile.getHeight()) - (4.330 * profile.getAge());
+        }
+
+        double activityMultiplier = profile.getActivityLevel().getFactor();
+        
+        return (int) Math.round(bmr * activityMultiplier);
     }
 }

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('User Profile')}"></head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: messages}"></div>
+
+<main class="flex-grow-1">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">Admin Menu</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a th:href="@{/admin/dashboard}" class="list-group-item list-group-item-action">Dashboard</a>
+                        <a th:href="@{/admin/users}" class="list-group-item list-group-item-action active">Manage Users</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">User Profile: <span th:text="${userProfile.username}"></span></h5>
+                        <a th:href="@{/admin/users}" class="btn btn-sm btn-light">Back to Users</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0">Account Information</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <th>Username</th>
+                                                <td th:text="${userProfile.username}"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Email</th>
+                                                <td th:text="${userProfile.email}"></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0">Personal Information</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <th>Full Name</th>
+                                                <td th:text="${userProfile.firstName + ' ' + userProfile.lastName}"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Age</th>
+                                                <td th:text="${userProfile.age}"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Gender</th>
+                                                <td th:text="${userProfile.gender}"></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0">Physical Information</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <th>Height</th>
+                                                <td th:text="${userProfile.height + ' cm'}"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Weight</th>
+                                                <td th:text="${userProfile.weight + ' kg'}"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Activity Level</th>
+                                                <td th:text="${userProfile.activityLevel}"></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0">Nutrition Information</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <th>Daily Calorie Goal</th>
+                                                <td th:text="${userProfile.dailyCalorieGoal + ' kcal'}"></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

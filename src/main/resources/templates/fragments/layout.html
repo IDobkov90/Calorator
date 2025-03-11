@@ -47,7 +47,9 @@
                             <span sec:authentication="name">Username</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" th:href="@{/profile}">Profile</a></li>
+                            <a class="dropdown-item" th:href="@{/profile}">
+                                <i class="bi bi-person me-2"></i>Profile
+                            </a>
                             <li><a class="dropdown-item" th:href="@{/settings}">Settings</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>

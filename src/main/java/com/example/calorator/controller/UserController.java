@@ -2,6 +2,7 @@ package com.example.calorator.controller;
 
 import com.example.calorator.model.dto.FoodItemDTO;
 import com.example.calorator.model.dto.PasswordChangeDTO;
+import com.example.calorator.model.dto.UserProfileDTO;
 import com.example.calorator.model.dto.UserRegisterDTO;
 import com.example.calorator.model.enums.ActivityLevel;
 import com.example.calorator.model.enums.FoodCategory;
@@ -141,5 +142,13 @@ public class UserController {
             redirectAttributes.addFlashAttribute("error", "Failed to change password: " + e.getMessage());
             return "redirect:/settings/change-password";
         }
+    }
+
+    @GetMapping("/profile")
+    @PreAuthorize("isAuthenticated()")
+    public String showProfilePage(Model model, Principal principal) {
+        UserProfileDTO userProfile = userService.getUserProfile(principal.getName());
+        model.addAttribute("userProfile", userProfile);
+        return "user/profile";
     }
 }
