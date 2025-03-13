@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Edit Food Log')}"></head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: messages}"></div>
+
+<main class="flex-grow-1 container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Edit Food Log</h3>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/food-logs/edit/{id}(id=${foodLog.id})}" th:object="${foodLog}" method="post">
+                        <input type="hidden" th:field="*{id}" />
+
+                        <div class="mb-3">
+                            <label for="foodItemId" class="form-label">Food Item</label>
+                            <select id="foodItemId" th:field="*{foodItemId}" class="form-select" required>
+                                <option value="">-- Select Food Item --</option>
+                                <option th:each="item : ${foodItems}"
+                                        th:value="${item.id}"
+                                        th:text="${item.name + ' (' + item.calories + ' kcal per ' + item.servingSize + ' ' + item.servingUnit + ')'}">
+                                </option>
+                            </select>
+                            <div class="text-danger" th:if="${#fields.hasErrors('foodItemId')}" th:errors="*{foodItemId}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Amount</label>
+                            <input type="number" id="amount" th:field="*{amount}" class="form-control" step="0.01" min="0.01" required />
+                            <div class="text-danger" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="mealType" class="form-label">Meal Type</label>
+                            <select id="mealType" th:field="*{mealType}" class="form-select" required>
+                                <option th:each="type : ${mealTypes}"
+                                        th:value="${type}"
+                                        th:text="${#strings.capitalize(#strings.toLowerCase(type.toString()))}">
+                                </option>
+                            </select>
+                            <div class="text-danger" th:if="${#fields.hasErrors('mealType')}" th:errors="*{mealType}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Date</label>
+                            <input type="date" id="date" th:field="*{date}" class="form-control" required />
+                            <div class="text-danger" th:if="${#fields.hasErrors('date')}" th:errors="*{date}"></div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/food-logs(date=${foodLog.date})}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Update Food Log</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+</html>
