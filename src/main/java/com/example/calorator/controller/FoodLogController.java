@@ -142,17 +142,30 @@ public class FoodLogController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             Model model,
             Authentication authentication) {
-
+        
         if (date == null) {
             date = LocalDate.now();
         }
 
         String username = authentication.getName();
         List<FoodLogDTO> foodLogs = foodLogService.getFoodLogsByDateAndMealType(date, mealType, username);
+
+        double totalCalories = foodLogs.stream().mapToDouble(FoodLogDTO::getTotalCalories).sum();
+        double totalProtein = foodLogs.stream().mapToDouble(FoodLogDTO::getTotalProtein).sum();
+        double totalCarbs = foodLogs.stream().mapToDouble(FoodLogDTO::getTotalCarbs).sum();
+        double totalFat = foodLogs.stream().mapToDouble(FoodLogDTO::getTotalFat).sum();
+        
+        NutritionSummaryDTO nutritionSummary = new NutritionSummaryDTO();
+        nutritionSummary.setTotalCalories(totalCalories);
+        nutritionSummary.setTotalProtein(totalProtein);
+        nutritionSummary.setTotalCarbs(totalCarbs);
+        nutritionSummary.setTotalFat(totalFat);
+        
         model.addAttribute("foodLogs", foodLogs);
+        model.addAttribute("nutritionSummary", nutritionSummary);
         model.addAttribute("selectedDate", date);
         model.addAttribute("selectedMealType", mealType);
-
+        
         return "food-logs/meal-view";
     }
 

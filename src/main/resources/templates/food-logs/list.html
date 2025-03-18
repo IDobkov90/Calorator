@@ -56,6 +56,24 @@
     </div>
 
     <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Filter by Meal Type</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between flex-wrap">
+                        <a th:each="mealType : ${mealTypes}"
+                           th:href="@{/food-logs/meal/{type}(type=${mealType}, date=${selectedDate})}"
+                           class="btn btn-outline-primary mb-2"
+                           th:text="${mealType}"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
         <div class="col-md-12">
             <div th:each="mealType : ${T(com.example.calorator.model.enums.MealType).values()}" class="card mb-3">
                 <div class="card-header">

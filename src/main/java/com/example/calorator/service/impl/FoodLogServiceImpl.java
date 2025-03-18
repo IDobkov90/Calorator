@@ -38,19 +38,26 @@ public class FoodLogServiceImpl implements FoodLogService {
     public FoodLogDTO createFoodLog(FoodLogDTO foodLogDTO, String username) {
         User user = getUserByUsername(username);
         FoodItem foodItem = getFoodItemById(foodLogDTO.getFoodItemId());
-
         FoodLog foodLog = foodLogMapper.toEntity(foodLogDTO);
         foodLog.setUser(user);
         foodLog.setFoodItem(foodItem);
         foodLog.setMealType(foodLogDTO.getMealType());
 
-        double totalCalories = calculateTotalCalories(foodItem.getCalories(),
-                foodItem.getServingSize(),
-                foodLogDTO.getAmount());
-        foodLog.setTotalCalories(totalCalories);
+        double servingRatio = foodLogDTO.getAmount() / foodItem.getServingSize();
+        double totalCalories = foodItem.getCalories() * servingRatio;
+        double totalProtein = foodItem.getProtein() * servingRatio;
+        double totalCarbs = foodItem.getCarbs() * servingRatio;
+        double totalFat = foodItem.getFat() * servingRatio;
 
+        foodLog.setTotalCalories(totalCalories);
         FoodLog savedFoodLog = foodLogRepository.save(foodLog);
-        return foodLogMapper.toDto(savedFoodLog);
+        FoodLogDTO savedFoodLogDTO = foodLogMapper.toDto(savedFoodLog);
+        savedFoodLogDTO.setTotalCalories(totalCalories);
+        savedFoodLogDTO.setTotalProtein(totalProtein);
+        savedFoodLogDTO.setTotalCarbs(totalCarbs);
+        savedFoodLogDTO.setTotalFat(totalFat);
+
+        return savedFoodLogDTO;
     }
 
     @Override
@@ -64,13 +71,21 @@ public class FoodLogServiceImpl implements FoodLogService {
         existingFoodLog.setAmount(foodLogDTO.getAmount());
         existingFoodLog.setFoodItem(foodItem);
 
-        double totalCalories = calculateTotalCalories(foodItem.getCalories(),
-                foodItem.getServingSize(),
-                foodLogDTO.getAmount());
+        double servingRatio = foodLogDTO.getAmount() / foodItem.getServingSize();
+        double totalCalories = foodItem.getCalories() * servingRatio;
+        double totalProtein = foodItem.getProtein() * servingRatio;
+        double totalCarbs = foodItem.getCarbs() * servingRatio;
+        double totalFat = foodItem.getFat() * servingRatio;
+
         existingFoodLog.setTotalCalories(totalCalories);
 
         FoodLog updatedFoodLog = foodLogRepository.save(existingFoodLog);
-        return foodLogMapper.toDto(updatedFoodLog);
+        FoodLogDTO updatedFoodLogDTO = foodLogMapper.toDto(updatedFoodLog);
+        updatedFoodLogDTO.setTotalCalories(totalCalories);
+        updatedFoodLogDTO.setTotalProtein(totalProtein);
+        updatedFoodLogDTO.setTotalCarbs(totalCarbs);
+        updatedFoodLogDTO.setTotalFat(totalFat);
+        return updatedFoodLogDTO;
     }
 
     @Override
@@ -84,7 +99,14 @@ public class FoodLogServiceImpl implements FoodLogService {
     @Transactional(readOnly = true)
     public FoodLogDTO getFoodLogById(Long id, String username) {
         FoodLog foodLog = getFoodLogByIdAndUsername(id, username);
-        return foodLogMapper.toDto(foodLog);
+        FoodLogDTO dto = foodLogMapper.toDto(foodLog);
+        FoodItem foodItem = foodLog.getFoodItem();
+        double servingRatio = foodLog.getAmount() / foodItem.getServingSize();
+        dto.setTotalCalories(foodLog.getTotalCalories());
+        dto.setTotalProtein(foodItem.getProtein() * servingRatio);
+        dto.setTotalCarbs(foodItem.getCarbs() * servingRatio);
+        dto.setTotalFat(foodItem.getFat() * servingRatio);
+        return dto;
     }
 
     @Override
@@ -93,7 +115,16 @@ public class FoodLogServiceImpl implements FoodLogService {
         User user = getUserByUsername(username);
         List<FoodLog> foodLogs = foodLogRepository.findByUserAndDate(user, date);
         return foodLogs.stream()
-                .map(foodLogMapper::toDto)
+                .map(foodLog -> {
+                    FoodLogDTO dto = foodLogMapper.toDto(foodLog);
+                    FoodItem foodItem = foodLog.getFoodItem();
+                    double servingRatio = foodLog.getAmount() / foodItem.getServingSize();
+                    dto.setTotalCalories(foodLog.getTotalCalories());
+                    dto.setTotalProtein(foodItem.getProtein() * servingRatio);
+                    dto.setTotalCarbs(foodItem.getCarbs() * servingRatio);
+                    dto.setTotalFat(foodItem.getFat() * servingRatio);
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -103,7 +134,16 @@ public class FoodLogServiceImpl implements FoodLogService {
         User user = getUserByUsername(username);
         List<FoodLog> foodLogs = foodLogRepository.findByUserAndDateAndMealType(user, date, mealType);
         return foodLogs.stream()
-                .map(foodLogMapper::toDto)
+                .map(foodLog -> {
+                    FoodLogDTO dto = foodLogMapper.toDto(foodLog);
+                    FoodItem foodItem = foodLog.getFoodItem();
+                    double servingRatio = foodLog.getAmount() / foodItem.getServingSize();
+                    dto.setTotalCalories(foodLog.getTotalCalories());
+                    dto.setTotalProtein(foodItem.getProtein() * servingRatio);
+                    dto.setTotalCarbs(foodItem.getCarbs() * servingRatio);
+                    dto.setTotalFat(foodItem.getFat() * servingRatio);
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
