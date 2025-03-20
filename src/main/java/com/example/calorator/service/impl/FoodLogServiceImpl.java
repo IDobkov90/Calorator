@@ -99,14 +99,7 @@ public class FoodLogServiceImpl implements FoodLogService {
     @Transactional(readOnly = true)
     public FoodLogDTO getFoodLogById(Long id, String username) {
         FoodLog foodLog = getFoodLogByIdAndUsername(id, username);
-        FoodLogDTO dto = foodLogMapper.toDto(foodLog);
-        FoodItem foodItem = foodLog.getFoodItem();
-        double servingRatio = foodLog.getAmount() / foodItem.getServingSize();
-        dto.setTotalCalories(foodLog.getTotalCalories());
-        dto.setTotalProtein(foodItem.getProtein() * servingRatio);
-        dto.setTotalCarbs(foodItem.getCarbs() * servingRatio);
-        dto.setTotalFat(foodItem.getFat() * servingRatio);
-        return dto;
+        return mapAndCalculateNutrients(foodLog);
     }
 
     @Override
@@ -115,16 +108,7 @@ public class FoodLogServiceImpl implements FoodLogService {
         User user = getUserByUsername(username);
         List<FoodLog> foodLogs = foodLogRepository.findByUserAndDate(user, date);
         return foodLogs.stream()
-                .map(foodLog -> {
-                    FoodLogDTO dto = foodLogMapper.toDto(foodLog);
-                    FoodItem foodItem = foodLog.getFoodItem();
-                    double servingRatio = foodLog.getAmount() / foodItem.getServingSize();
-                    dto.setTotalCalories(foodLog.getTotalCalories());
-                    dto.setTotalProtein(foodItem.getProtein() * servingRatio);
-                    dto.setTotalCarbs(foodItem.getCarbs() * servingRatio);
-                    dto.setTotalFat(foodItem.getFat() * servingRatio);
-                    return dto;
-                })
+                .map(this::mapAndCalculateNutrients)
                 .collect(Collectors.toList());
     }
 
@@ -134,16 +118,7 @@ public class FoodLogServiceImpl implements FoodLogService {
         User user = getUserByUsername(username);
         List<FoodLog> foodLogs = foodLogRepository.findByUserAndDateAndMealType(user, date, mealType);
         return foodLogs.stream()
-                .map(foodLog -> {
-                    FoodLogDTO dto = foodLogMapper.toDto(foodLog);
-                    FoodItem foodItem = foodLog.getFoodItem();
-                    double servingRatio = foodLog.getAmount() / foodItem.getServingSize();
-                    dto.setTotalCalories(foodLog.getTotalCalories());
-                    dto.setTotalProtein(foodItem.getProtein() * servingRatio);
-                    dto.setTotalCarbs(foodItem.getCarbs() * servingRatio);
-                    dto.setTotalFat(foodItem.getFat() * servingRatio);
-                    return dto;
-                })
+                .map(this::mapAndCalculateNutrients)
                 .collect(Collectors.toList());
     }
 
@@ -152,7 +127,7 @@ public class FoodLogServiceImpl implements FoodLogService {
     public Page<FoodLogDTO> getFoodLogsByDateRange(LocalDate startDate, LocalDate endDate, String username, Pageable pageable) {
         User user = getUserByUsername(username);
         Page<FoodLog> foodLogs = foodLogRepository.findByUserAndDateBetween(user, startDate, endDate, pageable);
-        return foodLogs.map(foodLogMapper::toDto);
+        return foodLogs.map(this::mapAndCalculateNutrients);
     }
 
     @Override
@@ -160,7 +135,7 @@ public class FoodLogServiceImpl implements FoodLogService {
     public Page<FoodLogDTO> searchFoodLogs(String query, String username, Pageable pageable) {
         User user = getUserByUsername(username);
         Page<FoodLog> foodLogs = foodLogRepository.findByUserAndFoodItemNameContainingIgnoreCase(user, query, pageable);
-        return foodLogs.map(foodLogMapper::toDto);
+        return foodLogs.map(this::mapAndCalculateNutrients);
     }
 
     @Override
@@ -258,7 +233,7 @@ public class FoodLogServiceImpl implements FoodLogService {
     public Page<FoodLogDTO> getRecentFoodLogs(String username, Pageable pageable) {
         User user = getUserByUsername(username);
         Page<FoodLog> foodLogs = foodLogRepository.findByUserOrderByDateDescCreatedAtDesc(user, pageable);
-        return foodLogs.map(foodLogMapper::toDto);
+        return foodLogs.map(this::mapAndCalculateNutrients);
     }
 
     @Override
@@ -266,7 +241,7 @@ public class FoodLogServiceImpl implements FoodLogService {
     public Page<FoodLogDTO> getFrequentlyLoggedFoods(String username, Pageable pageable) {
         User user = getUserByUsername(username);
         Page<FoodLog> frequentFoodLogs = foodLogRepository.findMostFrequentFoodLogsByUser(user, pageable);
-        return frequentFoodLogs.map(foodLogMapper::toDto);
+        return frequentFoodLogs.map(this::mapAndCalculateNutrients);
     }
 
     private User getUserByUsername(String username) {
@@ -287,5 +262,16 @@ public class FoodLogServiceImpl implements FoodLogService {
 
     private double calculateTotalCalories(double caloriesPerServing, double servingSize, double amount) {
         return (caloriesPerServing / servingSize) * amount;
+    }
+
+    private FoodLogDTO mapAndCalculateNutrients(FoodLog foodLog) {
+        FoodLogDTO dto = this.foodLogMapper.toDto(foodLog);
+        FoodItem foodItem = foodLog.getFoodItem();
+        double servingRatio = foodLog.getAmount() / foodItem.getServingSize();
+        dto.setTotalCalories(foodLog.getTotalCalories());
+        dto.setTotalProtein(foodItem.getProtein() * servingRatio);
+        dto.setTotalCarbs(foodItem.getCarbs() * servingRatio);
+        dto.setTotalFat(foodItem.getFat() * servingRatio);
+        return dto;
     }
 }

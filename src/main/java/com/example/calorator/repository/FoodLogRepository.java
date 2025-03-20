@@ -18,8 +18,8 @@ import java.util.Optional;
 public interface FoodLogRepository extends JpaRepository<FoodLog, Long> {
 
     @Query("SELECT fl FROM FoodLog fl WHERE fl.user = :user " +
-            "GROUP BY fl.foodItem.id " +
-            "ORDER BY COUNT(fl.id) DESC")
+           "GROUP BY fl.id, fl.foodItem.id, fl.amount, fl.date, fl.mealType, fl.totalCalories " +
+           "ORDER BY COUNT(fl.id) DESC")
     Page<FoodLog> findMostFrequentFoodLogsByUser(User user, Pageable pageable);
 
     List<FoodLog> findByUserAndDate(User user, LocalDate date);

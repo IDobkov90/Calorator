@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/layout :: head(title='Frequently Logged Foods')">
+    <title>Frequently Logged Foods</title>
+</head>
+<body>
+<nav th:replace="fragments/layout :: nav"></nav>
+<div th:replace="fragments/layout :: messages"></div>
+
+<div class="container my-4">
+    <h1 class="mb-4">Frequently Logged Foods</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <div th:if="${frequentFoods.empty}" class="alert alert-info">
+                No frequently logged foods found.
+            </div>
+
+            <div th:if="${!frequentFoods.empty}" class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Food Item</th>
+                        <th>Calories</th>
+                        <th>Protein</th>
+                        <th>Carbs</th>
+                        <th>Fat</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="foodLog : ${frequentFoods}">
+                        <td th:text="${foodLog.foodItemName}">Food Item Name</td>
+                        <td th:text="${#numbers.formatDecimal(foodLog.totalCalories, 1, 1)}">Calories</td>
+                        <td th:text="${#numbers.formatDecimal(foodLog.totalProtein, 1, 1)}">Protein</td>
+                        <td th:text="${#numbers.formatDecimal(foodLog.totalCarbs, 1, 1)}">Carbs</td>
+                        <td th:text="${#numbers.formatDecimal(foodLog.totalFat, 1, 1)}">Fat</td>
+                        <td>
+                            <a th:href="@{/food-logs/create(foodItemId=${foodLog.foodItemId})}" class="btn btn-sm btn-primary">Log Again</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav th:if="${totalPages > 1}" aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link" th:href="@{/food-logs/frequent(page=${currentPage - 1})}" tabindex="-1">Previous</a>
+                    </li>
+                    <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? 'active'">
+                        <a class="page-link" th:href="@{/food-logs/frequent(page=${i})}" th:text="${i + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{/food-logs/frequent(page=${currentPage + 1})}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="/food-logs" class="btn btn-secondary">Back to Food Logs</a>
+    </div>
+</div>
+
+<div th:replace="fragments/layout :: footer"></div>
+<div th:replace="fragments/layout :: scripts"></div>
+</body>
+</html>

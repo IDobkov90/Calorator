@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/layout :: head(title='Search Results')">
+    <title>Search Results</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="fragments/layout :: navbar"></nav>
+<div th:replace="fragments/layout :: messages"></div>
+
+<main class="flex-grow-1">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h1>Search Results for <span th:text="${query}">Query</span></h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div th:if="${#lists.isEmpty(searchResults)}" class="alert alert-info">
+                    No results found for your search query.
+                </div>
+                <table th:unless="${#lists.isEmpty(searchResults)}" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Food Item</th>
+                        <th>Calories</th>
+                        <th>Protein</th>
+                        <th>Carbs</th>
+                        <th>Fat</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="foodLog : ${searchResults}">
+                            <td th:text="${#temporals.format(foodLog.date, 'MMMM d, yyyy')}"></td>
+                            <td th:text="${foodLog.foodItemName}"></td>
+                            <td th:text="${foodLog.totalCalories != null ? #numbers.formatDecimal(foodLog.totalCalories, 1, 1) + ' kcal' : 'N/A'}"></td>
+                            <td th:text="${foodLog.totalProtein != null ? #numbers.formatDecimal(foodLog.totalProtein, 1, 1) + ' g' : 'N/A'}"></td>
+                            <td th:text="${foodLog.totalCarbs != null ? #numbers.formatDecimal(foodLog.totalCarbs, 1, 1) + ' g' : 'N/A'}"></td>
+                            <td th:text="${foodLog.totalFat != null ? #numbers.formatDecimal(foodLog.totalFat, 1, 1) + ' g' : 'N/A'}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <nav th:if="${totalPages > 1}" aria-label="Search Results Pagination">
+                    <ul class="pagination justify-content-center">
+                        <li th:classappend="${currentPage == 0} ? 'page-item disabled' : 'page-item'">
+                            <a th:href="@{/food-logs/search(query=${query}, page=${currentPage - 1})}" class="page-link" th:text="'Previous'"></a>
+                        </li>
+                        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${i == currentPage} ? 'page-item active' : 'page-item'">
+                            <a th:href="@{/food-logs/search(query=${query}, page=${i})}" th:text="${i + 1}" class="page-link"></a>
+                        </li>
+                        <li th:classappend="${currentPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
+                            <a th:href="@{/food-logs/search(query=${query}, page=${currentPage + 1})}" class="page-link" th:text="'Next'"></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="fragments/layout :: footer"></footer>
+
+<div th:replace="fragments/layout :: scripts"></div>
+</body>
+</html>

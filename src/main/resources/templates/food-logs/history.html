@@ -99,11 +99,11 @@
                                 <td th:text="${#temporals.format(log.date, 'MMM d, yyyy')}"></td>
                                 <td th:text="${log.mealType}"></td>
                                 <td th:text="${log.foodItemName}"></td>
-                                <td th:text="${#numbers.formatDecimal(log.amount, 1, 1)}"></td>
-                                <td th:text="${#numbers.formatDecimal(log.totalCalories, 1, 1)}"></td>
-                                <td th:text="${#numbers.formatDecimal(log.totalProtein, 1, 1)} + 'g'"></td>
-                                <td th:text="${#numbers.formatDecimal(log.totalCarbs, 1, 1)} + 'g'"></td>
-                                <td th:text="${#numbers.formatDecimal(log.totalFat, 1, 1)} + 'g'"></td>
+                                <td th:text="${log.amount != null ? #numbers.formatDecimal(log.amount, 1, 1) : 'N/A'}"></td>
+                                <td th:text="${log.totalCalories != null ? #numbers.formatDecimal(log.totalCalories, 1, 1) : 'N/A'}"></td>
+                                <td th:text="${log.totalProtein != null ? #numbers.formatDecimal(log.totalProtein, 1, 1) + 'g' : 'N/A'}"></td>
+                                <td th:text="${log.totalCarbs != null ? #numbers.formatDecimal(log.totalCarbs, 1, 1) + 'g' : 'N/A'}"></td>
+                                <td th:text="${log.totalFat != null ? #numbers.formatDecimal(log.totalFat, 1, 1) + 'g' : 'N/A'}"></td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
                                         <a th:href="@{/food-logs/edit/{id}(id=${log.id})}" class="btn btn-outline-primary">
