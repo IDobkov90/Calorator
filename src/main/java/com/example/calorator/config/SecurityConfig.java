@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/food-items/**").authenticated()
+                        .requestMatchers("/goals/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

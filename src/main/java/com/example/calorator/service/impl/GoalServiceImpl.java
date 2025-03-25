@@ -11,9 +11,11 @@ import com.example.calorator.repository.UserRepository;
 import com.example.calorator.service.GoalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class GoalServiceImpl implements GoalService {
 
     private final GoalRepository goalRepository;
@@ -41,12 +43,15 @@ public class GoalServiceImpl implements GoalService {
         goal.setUser(user);
 
         double baseCalories = calculateBaseCalories(user);
-        goal.setDailyCalorieGoal(baseCalories + goalDTO.getType().getCalorieAdjustment());
+        double calculatedDailyCalorieGoal = baseCalories + goalDTO.getType().getCalorieAdjustment();
+        goal.setDailyCalorieGoal(calculatedDailyCalorieGoal);
+        goalDTO.setDailyCalorieGoal(calculatedDailyCalorieGoal);
 
         goalRepository.save(goal);
     }
 
     @Override
+    @Transactional
     public void deleteGoal(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));

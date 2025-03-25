@@ -17,4 +17,5 @@ public class GoalDTO {
     private GoalType type;
     @Min(value = 20, message = "Target weight must be at least 20")
     private double targetWeight;
+    private double dailyCalorieGoal;
 }
