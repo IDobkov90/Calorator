@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Generate Report')}"></head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: messages}"></div>
+
+<main class="flex-grow-1">
+    <div class="container py-5">
+        <h1 class="mb-4">Generate New Report</h1>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <form th:action="@{/reports/generate}" method="post">
+                    <div class="mb-3">
+                        <label for="reportType" class="form-label">Report Type</label>
+                        <select class="form-select" id="reportType" name="reportType" required>
+                            <option value="">Select a report type</option>
+                            <option th:each="type : ${reportTypes}" th:value="${type}" th:text="${type}"></option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="startDate" class="form-label">Start Date</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="endDate" class="form-label">End Date</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Generate Report</button>
+                    <a href="/reports" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const startDate = document.getElementById('startDate');
+        const endDate = document.getElementById('endDate');
+        const reportType = document.getElementById('reportType');
+
+        reportType.addEventListener('change', function() {
+            const today = new Date();
+            let start = new Date(today);
+
+            switch(this.value) {
+                case 'DAILY':
+                    start.setDate(today.getDate() - 1);
+                    break;
+                case 'WEEKLY':
+                    start.setDate(today.getDate() - 7);
+                    break;
+                case 'MONTHLY':
+                    start.setMonth(today.getMonth() - 1);
+                    break;
+            }
+
+            startDate.value = start.toISOString().split('T')[0];
+            endDate.value = today.toISOString().split('T')[0];
+        });
+    });
+</script>
+
+</body>
+</html>

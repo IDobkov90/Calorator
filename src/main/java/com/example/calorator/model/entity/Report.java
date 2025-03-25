@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class Report extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     @Column(nullable = false, name = "start_date")

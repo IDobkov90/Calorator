@@ -4,6 +4,7 @@ import com.example.calorator.security.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -45,6 +46,8 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/food-items/**").authenticated()
                         .requestMatchers("/goals/**").authenticated()
+                        .requestMatchers("/reports/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/reports/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

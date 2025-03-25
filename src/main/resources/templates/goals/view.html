@@ -14,7 +14,7 @@
             <div class="card-body">
                 <h5 class="card-title" th:text="${'Goal Type: ' + goal.type}"></h5>
                 <p class="card-text" th:text="${'Target Weight: ' + goal.targetWeight + ' kg'}"></p>
-                <p class="card-text" th:text="${'Daily Calorie Goal: ' + goal.dailyCalorieGoal + ' calories'}"></p>
+                <p class="card-text" th:text="${'Daily Calorie Goal: ' + #numbers.formatDecimal(goal.dailyCalorieGoal, 1, 2) + ' calories'}"></p>
                 <a th:href="@{/goals/edit}" class="btn btn-primary">Edit Goal</a>
                 <form th:action="@{/goals/delete}" method="post" class="d-inline">
                     <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete your goal?')">Delete Goal</button>

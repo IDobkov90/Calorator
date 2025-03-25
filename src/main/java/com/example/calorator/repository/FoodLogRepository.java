@@ -43,4 +43,6 @@ public interface FoodLogRepository extends JpaRepository<FoodLog, Long> {
     List<Object[]> sumCaloriesByDateForUserAndDateRange(@Param("user") User user, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     Page<FoodLog> findByUserOrderByDateDescCreatedAtDesc(User user, Pageable pageable);
+
+    List<FoodLog> findByUserAndDateBetween(User user, LocalDate startDate, LocalDate endDate);
 }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Report Details')}"></head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: messages}"></div>
+
+<main class="flex-grow-1">
+    <div class="container py-5">
+        <h1 class="mb-4">Report Details</h1>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title" th:text="${report.reportType + ' Report'}">Report Type</h5>
+                <p class="card-text">
+                    <strong>Period:</strong>
+                    <span th:text="${#temporals.format(report.startDate, 'dd-MM-yyyy')}">Start Date</span> to
+                    <span th:text="${#temporals.format(report.endDate, 'dd-MM-yyyy')}">End Date</span>
+                </p>
+                <p class="card-text">
+                    <strong>Average Daily Calories:</strong>
+                    <span th:text="${#numbers.formatDecimal(report.averageCalories, 1, 2)}">Average Calories</span>
+                </p>
+                <p class="card-text">
+                    <strong>Weight Change:</strong>
+                    <span th:text="${#numbers.formatDecimal(report.weightChange, 1, 2) + ' kg'}">Weight Change</span>
+                </p>
+                <a href="/reports" class="btn btn-primary mt-3">Back to Reports</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+</html>
