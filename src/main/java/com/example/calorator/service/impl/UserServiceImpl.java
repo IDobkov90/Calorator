@@ -101,6 +101,28 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserDTO(user);
     }
 
+    @Override
+    public UserDTO updateUserRole(String username, UserRole role) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+
+        org.springframework.security.core.Authentication authentication =
+                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getName().equals(username)
+                && user.getRole() == UserRole.ADMIN) {
+            throw new IllegalStateException("Administrators cannot change their own role");
+        }
+
+        user.setRole(role);
+        User savedUser = userRepository.save(user);
+        return userMapper.toUserDTO(savedUser);
+    }
+
+    @Override
+    public UserRole[] getAllAvailableRoles() {
+        return UserRole.values();
+    }
+
     private Integer calculateDailyCalorieGoal(UserProfile profile) {
         double bmr;
         if (profile.getGender() == Gender.MALE) {

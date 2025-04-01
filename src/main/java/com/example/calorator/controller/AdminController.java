@@ -5,6 +5,7 @@ import com.example.calorator.model.dto.UserDTO;
 import com.example.calorator.model.dto.UserProfileDTO;
 import com.example.calorator.model.entity.User;
 import com.example.calorator.model.enums.FoodCategory;
+import com.example.calorator.model.enums.UserRole;
 import com.example.calorator.repository.UserRepository;
 import com.example.calorator.service.FoodItemService;
 import com.example.calorator.service.UserService;
@@ -16,10 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin")
@@ -47,26 +46,26 @@ public class AdminController {
         Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "id"));
         Page<FoodItemDTO> recentFoodItems = foodItemService.getAllFoodItems(pageable);
         model.addAttribute("recentFoodItems", recentFoodItems.getContent());
-        
+
         return "admin/dashboard";
     }
-    
+
     @GetMapping("/users")
     public String listUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             Model model) {
-        
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("username").ascending());
         Page<UserDTO> userPage = userService.getAllUsers(pageable);
-        
+
         model.addAttribute("users", userPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", userPage.getTotalPages());
-        
+
         return "admin/users";
     }
-    
+
     @GetMapping("/users/{username}")
     public String viewUserProfile(@PathVariable String username, Model model) {
         UserProfileDTO userProfile = userService.getUserProfile(username);
@@ -75,5 +74,35 @@ public class AdminController {
         }
         model.addAttribute("userProfile", userProfile);
         return "admin/user-profile";
+    }
+
+    @GetMapping("/users/{username}/role")
+    public String editUserRoleForm(@PathVariable String username, Model model) {
+        UserDTO user = userService.getUserByUsername(username);
+        UserRole[] allRoles = userService.getAllAvailableRoles();
+
+        model.addAttribute("user", user);
+        model.addAttribute("allRoles", allRoles);
+        model.addAttribute("currentRole", user.getRole());
+
+        return "admin/edit-user-role";
+    }
+
+    @PostMapping("/users/{username}/role")
+    public String updateUserRole(
+            @PathVariable String username,
+            @RequestParam UserRole role,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            userService.updateUserRole(username, role);
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "User role for " + username + " updated successfully to " + role);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Error updating user role: " + e.getMessage());
+        }
+
+        return "redirect:/admin/users";
     }
 }

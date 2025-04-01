@@ -6,6 +6,16 @@
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 <div th:replace="~{fragments/layout :: messages}"></div>
 
+<div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${successMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <span th:text="${errorMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
 <main class="flex-grow-1">
     <div class="container py-5">
         <div class="row">
@@ -45,8 +55,12 @@
                                     <td th:text="${user.email}"></td>
                                     <td th:text="${user.role}"></td>
                                     <td>
-                                        <a th:href="@{/admin/users/{username}(username=${user.username})}"
-                                           class="btn btn-sm btn-primary">View Profile</a>
+                                        <div class="btn-group btn-group-sm">
+                                            <a th:href="@{/admin/users/{username}(username=${user.username})}"
+                                               class="btn btn-outline-primary">View Profile</a>
+                                            <a th:href="@{/admin/users/{username}/role(username=${user.username})}"
+                                               class="btn btn-outline-warning">Edit Role</a>
+                                        </div>
                                     </td>
                                 </tr>
                                 </tbody>
