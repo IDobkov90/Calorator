@@ -13,8 +13,6 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import java.util.ArrayList;
-
 @Service
 @RequiredArgsConstructor
 public class NutritionInfoService {
@@ -52,34 +50,58 @@ public class NutritionInfoService {
     }
 
     public FoodItemDTO createFoodItem(FoodItemDTO foodItemDTO) {
-        return nutritionInfoRestClient.post()
-                .uri("/api/food-items")
-                .body(foodItemDTO)
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError,
-                        (request, response) -> {
-                            throw new RuntimeException("Invalid food item data");
-                        })
-                .onStatus(HttpStatusCode::is5xxServerError,
-                        (request, response) -> {
-                            throw new RuntimeException("Server error");
-                        })
-                .body(FoodItemDTO.class);
+        try {
+            logger.info("Creating new food item: {}", foodItemDTO);
+
+            FoodItemDTO createdItem = nutritionInfoRestClient.post()
+                    .uri("/api/food-items")
+                    .body(foodItemDTO)
+                    .retrieve()
+                    .onStatus(HttpStatusCode::is4xxClientError,
+                            (request, response) -> {
+                                logger.error("Client error when creating food item: {}", response.getStatusCode());
+                                throw new RuntimeException("Invalid food item data");
+                            })
+                    .onStatus(HttpStatusCode::is5xxServerError,
+                            (request, response) -> {
+                                logger.error("Server error when creating food item: {}", response.getStatusCode());
+                                throw new RuntimeException("Server error");
+                            })
+                    .body(FoodItemDTO.class);
+
+            logger.info("Successfully created food item: {}", createdItem);
+            return createdItem;
+        } catch (Exception e) {
+            logger.error("Error creating food item", e);
+            throw e;
+        }
     }
 
     public FoodItemDTO updateFoodItem(Long id, FoodItemDTO foodItemDTO) {
-        return nutritionInfoRestClient.put()
-                .uri("/api/food-items/{id}", id)
-                .body(foodItemDTO)
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError,
-                        (request, response) -> {
-                            throw new RuntimeException("Food item not found or invalid data");
-                        })
-                .onStatus(HttpStatusCode::is5xxServerError,
-                        (request, response) -> {
-                            throw new RuntimeException("Server error");
-                        })
-                .body(FoodItemDTO.class);
+        try {
+            logger.info("Updating food item with id {}: {}", id, foodItemDTO);
+
+            FoodItemDTO updatedItem = nutritionInfoRestClient.put()
+                    .uri("/api/food-items/{id}", id)
+                    .body(foodItemDTO)
+                    .retrieve()
+                    .onStatus(HttpStatusCode::is4xxClientError,
+                            (request, response) -> {
+                                logger.error("Client error when updating food item {}: {}", id, response.getStatusCode());
+                                throw new RuntimeException("Food item not found or invalid data");
+                            })
+                    .onStatus(HttpStatusCode::is5xxServerError,
+                            (request, response) -> {
+                                logger.error("Server error when updating food item {}: {}", id, response.getStatusCode());
+                                throw new RuntimeException("Server error");
+                            })
+                    .body(FoodItemDTO.class);
+
+            logger.info("Successfully updated food item {}: {}", id, updatedItem);
+            return updatedItem;
+        } catch (Exception e) {
+            logger.error("Error updating food item with id {}", id, e);
+            throw e;
+        }
     }
 }
