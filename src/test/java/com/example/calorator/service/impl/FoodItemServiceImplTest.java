@@ -204,7 +204,7 @@ class FoodItemServiceImplTest {
 
     @Test
     void updateFoodItem_ShouldReturnUpdatedFoodItem() {
-        // Arrange
+
         FoodItemDTO updateDTO = new FoodItemDTO();
         updateDTO.setId(1L);
         updateDTO.setName("Updated Food");
