@@ -203,16 +203,26 @@ class FoodLogControllerIntegrationTest extends BaseIntegrationTest {
     @WithMockUser(username = "testuser")
     void getFoodLogsByMealType_ShouldReturnMealView() throws Exception {
 
-        List<FoodLogDTO> breakfastLogs = testFoodLogs.stream()
-                .filter(log -> log.getMealType() == MealType.BREAKFAST)
-                .toList();
+        FoodLogDTO breakfastLog = new FoodLogDTO();
+        breakfastLog.setId(1L);
+        breakfastLog.setFoodItemId(1L);
+        breakfastLog.setFoodItemName("Apple");
+        breakfastLog.setDate(testDate);
+        breakfastLog.setMealType(MealType.BREAKFAST);
+        breakfastLog.setAmount(1.0);
+        breakfastLog.setTotalCalories(100.0);
+        breakfastLog.setTotalProtein(5.0);
+        breakfastLog.setTotalCarbs(20.0);
+        breakfastLog.setTotalFat(1.0);
+
+        List<FoodLogDTO> breakfastLogs = List.of(breakfastLog);
 
         when(foodLogService.getFoodLogsByDateAndMealType(eq(testDate), eq(MealType.BREAKFAST), eq("testuser")))
                 .thenReturn(breakfastLogs);
 
         mockMvc.perform(get("/food-logs/meal/BREAKFAST")
                         .param("date", testDate.toString())
-                        .with(csrf()))  // Add CSRF token
+                        .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("food-logs/meal-view"))
