@@ -22,6 +22,9 @@ INSERT INTO GOALS (id, user_id, type, target_weight, daily_calorie_goal, created
 VALUES
 (1, 1, 'LOSE_WEIGHT', 75.0, 2000.0, NOW(), NOW());
 
+-- Update FOOD_LOGS table to include total_calories column
+ALTER TABLE FOOD_LOGS ADD COLUMN IF NOT EXISTS total_calories DOUBLE DEFAULT 0.0;
+
 -- Test Food Logs (for yesterday and today)
 INSERT INTO FOOD_LOGS (id, user_id, food_item_id, quantity, meal_type, log_date, created_at, updated_at)
 VALUES
@@ -29,6 +32,12 @@ VALUES
 (2, 1, 2, 1.5, 'LUNCH', CURRENT_DATE() - 1, NOW(), NOW()),
 (3, 1, 3, 1.0, 'DINNER', CURRENT_DATE() - 1, NOW(), NOW()),
 (4, 1, 1, 2.0, 'BREAKFAST', CURRENT_DATE(), NOW(), NOW());
+
+-- Update existing records with total_calories values
+UPDATE FOOD_LOGS SET total_calories = 52.0 WHERE id = 1;  -- Apple
+UPDATE FOOD_LOGS SET total_calories = 247.5 WHERE id = 2; -- Chicken (1.5 * 165)
+UPDATE FOOD_LOGS SET total_calories = 112.0 WHERE id = 3; -- Rice
+UPDATE FOOD_LOGS SET total_calories = 104.0 WHERE id = 4; -- Apple (2 * 52)
 
 -- Test Reports
 INSERT INTO REPORTS (id, user_id, report_type, start_date, end_date, created_at, updated_at)

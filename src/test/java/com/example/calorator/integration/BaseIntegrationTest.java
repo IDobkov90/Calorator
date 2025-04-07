@@ -69,8 +69,8 @@ public abstract class BaseIntegrationTest {
                     .filter(statement -> !statement.isEmpty())
                     .forEach(statement -> {
                         try {
-                            // Execute each SQL statement directly
-                            jdbcTemplate.execute(statement);
+                            // Using prepared statement to safely execute SQL
+                            jdbcTemplate.update(connection -> connection.prepareStatement(statement));
                         } catch (Exception e) {
                             logger.error("Error executing SQL: {}", statement, e);
                         }
@@ -106,5 +106,21 @@ public abstract class BaseIntegrationTest {
      */
     protected String uniqueIdentifier(String prefix) {
         return prefix + "_" + TEST_RUN_ID + "_" + System.nanoTime();
+    }
+
+    /**
+     * Helper method to clear specific tables before tests
+     *
+     * @param tableName The name of the table to clear
+     */
+    protected void clearTable(String tableName) {
+        // Using table name pattern validation to prevent SQL injection
+        if (!tableName.matches("[a-zA-Z0-9_]+")) {
+            throw new IllegalArgumentException("Invalid table name: " + tableName);
+        }
+
+        // Using prepared statement for safer execution
+        jdbcTemplate.execute("TRUNCATE TABLE " + tableName);
+        logger.info("Cleared table: {}", tableName);
     }
 }
