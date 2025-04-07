@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,7 +51,7 @@ public class NutritionInfoServiceController {
     @PostMapping("/food-items")
     public ResponseEntity<FoodItemDTO> createFoodItem(@RequestBody FoodItemDTO foodItemDTO) {
         FoodItemDTO createdFoodItem = nutritionInfoService.createFoodItem(foodItemDTO);
-        return ResponseEntity.ok(createdFoodItem);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdFoodItem);
     }
 
     @PutMapping("/food-items/{id}")
