@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FoodLogMapperTest {
+class FoodLogMapperTest {
 
     private final FoodLogMapper mapper = Mappers.getMapper(FoodLogMapper.class);
 
