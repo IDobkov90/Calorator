@@ -35,7 +35,7 @@ The application follows a clean architecture pattern with separation of concerns
 
 1. Clone the repository
    ```sh
-   git clone https://github.com/yourusername/Calorator.git
+   git clone https://github.com/IDobkov90/Calorator.git
    cd Calorator
 
 2. Configure your database settings in application.properties
