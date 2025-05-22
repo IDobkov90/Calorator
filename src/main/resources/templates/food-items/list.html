@@ -43,6 +43,57 @@
             </div>
         </div>
     </div>
+
+    <!-- Pagination -->
+    <div th:if="${foodItems.totalPages > 1}" class="d-flex justify-content-center mt-4">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${foodItems.number == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/food-items(page=0, size=${foodItems.size}, sort=${param.sort}, direction=${param.direction}, category=${param.category})}" aria-label="First">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item" th:classappend="${foodItems.number == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/food-items(page=${foodItems.number - 1}, size=${foodItems.size}, sort=${param.sort}, direction=${param.direction}, category=${param.category})}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                <li class="page-item"
+                    th:each="i : ${#numbers.sequence(0, foodItems.totalPages - 1)}"
+                    th:if="${i >= foodItems.number - 2 and i <= foodItems.number + 2}"
+                    th:classappend="${foodItems.number == i} ? 'active'">
+                    <a class="page-link" th:href="@{/food-items(page=${i}, size=${foodItems.size}, sort=${param.sort}, direction=${param.direction}, category=${param.category})}" th:text="${i + 1}"></a>
+                </li>
+
+                <li class="page-item" th:classappend="${foodItems.number == foodItems.totalPages - 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/food-items(page=${foodItems.number + 1}, size=${foodItems.size}, sort=${param.sort}, direction=${param.direction}, category=${param.category})}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li class="page-item" th:classappend="${foodItems.number == foodItems.totalPages - 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/food-items(page=${foodItems.totalPages - 1}, size=${foodItems.size}, sort=${param.sort}, direction=${param.direction}, category=${param.category})}" aria-label="Last">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Page Size Selector -->
+    <div class="d-flex justify-content-center mt-3">
+        <div class="btn-group">
+            <a th:each="pageSize : ${#arrays.toArray({5, 10, 20, 50})}"
+               th:href="@{/food-items(page=0, size=${pageSize}, sort=${param.sort}, direction=${param.direction}, category=${param.category})}"
+               th:text="${pageSize}"
+               th:class="${foodItems.size == pageSize ? 'btn btn-primary' : 'btn btn-outline-primary'}"></a>
+        </div>
+    </div>
+
+    <!-- Add New Food Item Button -->
+    <div class="d-flex justify-content-center mt-4">
+        <a href="/food-items/create" class="btn btn-success">Add New Food Item</a>
+    </div>
 </main>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>

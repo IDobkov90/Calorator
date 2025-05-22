@@ -110,9 +110,24 @@ public class FoodItemServiceImpl implements FoodItemService {
 
     private void validateNutritionalValues(FoodItemDTO dto) {
         double totalGrams = dto.getProtein() + dto.getCarbs() + dto.getFat();
-        if ("GRAM".equalsIgnoreCase(dto.getServingUnit()) && totalGrams > dto.getServingSize()) {
+        String servingUnit = dto.getServingUnit();
+
+        double toleranceFactor = 1.05;
+
+        if ("GRAM".equalsIgnoreCase(servingUnit) && totalGrams > dto.getServingSize() * toleranceFactor) {
+            throw new IllegalArgumentException("Total macronutrients cannot exceed serving size");
+        } else if ("MILLILITER".equalsIgnoreCase(servingUnit) && totalGrams > dto.getServingSize() * toleranceFactor) {
+            throw new IllegalArgumentException("Total macronutrients cannot exceed serving size");
+        } else if ("OUNCE".equalsIgnoreCase(servingUnit) && totalGrams > dto.getServingSize() * 28.35 * toleranceFactor) {
+            throw new IllegalArgumentException("Total macronutrients cannot exceed serving size");
+        } else if ("CUP".equalsIgnoreCase(servingUnit) && totalGrams > dto.getServingSize() * 240 * toleranceFactor) {
+            throw new IllegalArgumentException("Total macronutrients cannot exceed serving size");
+        } else if ("TABLESPOON".equalsIgnoreCase(servingUnit) && totalGrams > dto.getServingSize() * 15 * toleranceFactor) {
+            throw new IllegalArgumentException("Total macronutrients cannot exceed serving size");
+        } else if ("TEASPOON".equalsIgnoreCase(servingUnit) && totalGrams > dto.getServingSize() * 5 * toleranceFactor) {
             throw new IllegalArgumentException("Total macronutrients cannot exceed serving size");
         }
+
         double calculatedCalories = (dto.getProtein() * 4) + (dto.getCarbs() * 4) + (dto.getFat() * 9);
         double allowedDeviation = 10;
         if (Math.abs(calculatedCalories - dto.getCalories()) > allowedDeviation) {
