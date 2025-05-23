@@ -25,4 +25,6 @@ public interface FoodItemService {
     void deleteFoodItem(Long id);
 
     Page<FoodItemDTO> getRecentFoodItems(Pageable pageable);
+
+    long countFoodItems();
 }

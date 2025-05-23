@@ -32,10 +32,17 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     @PreAuthorize("hasRole('ADMIN')")
-    public String adminDashboard(Model model) {
+    public String adminDashboard(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            Model model) {
+
 
         model.addAttribute("foodCategories", FoodCategory.values());
-        model.addAttribute("totalFoodItems", foodItemService.getAllFoodItems().size());
+
+
+        model.addAttribute("totalFoodItems", foodItemService.countFoodItems());
+        
 
         model.addAttribute("totalUsers", userRepository.count());
 
@@ -43,10 +50,14 @@ public class AdminController {
         Page<User> recentUsersPage = userRepository.findAll(userPageable);
         model.addAttribute("recentUsers", recentUsersPage.getContent());
 
-        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "id"));
-        Page<FoodItemDTO> recentFoodItems = foodItemService.getAllFoodItems(pageable);
-        model.addAttribute("recentFoodItems", recentFoodItems.getContent());
+        Pageable foodPageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        Page<FoodItemDTO> recentFoodItemsPage = foodItemService.getAllFoodItems(foodPageable);
 
+        model.addAttribute("recentFoodItems", recentFoodItemsPage.getContent());
+        model.addAttribute("currentPage", recentFoodItemsPage.getNumber());
+        model.addAttribute("totalPages", recentFoodItemsPage.getTotalPages());
+        model.addAttribute("totalItems", recentFoodItemsPage.getTotalElements());
+        
         return "admin/dashboard";
     }
 
@@ -62,6 +73,7 @@ public class AdminController {
         model.addAttribute("users", userPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", userPage.getTotalPages());
+        model.addAttribute("pageSize", size);
 
         return "admin/users";
     }

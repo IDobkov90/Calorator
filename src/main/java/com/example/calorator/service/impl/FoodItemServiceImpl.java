@@ -103,6 +103,12 @@ public class FoodItemServiceImpl implements FoodItemService {
 
     @Override
     @Transactional(readOnly = true)
+    public long countFoodItems() {
+        return foodItemRepository.count();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<FoodItemDTO> getFoodItemsByCategory(FoodCategory category, Pageable pageable) {
         Page<FoodItem> foodItemPage = foodItemRepository.findByCategory(category, pageable);
         return foodItemPage.map(foodItemMapper::toDto);
