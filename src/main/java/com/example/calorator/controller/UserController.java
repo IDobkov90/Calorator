@@ -101,6 +101,7 @@ public class UserController {
         model.addAttribute("currentPage", recentFoodItemsPage.getNumber());
         model.addAttribute("totalPages", recentFoodItemsPage.getTotalPages());
         model.addAttribute("totalItems", recentFoodItemsPage.getTotalElements());
+        model.addAttribute("size", size);
         
         return "user/dashboard";
     }

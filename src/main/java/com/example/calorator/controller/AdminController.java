@@ -37,27 +37,25 @@ public class AdminController {
             @RequestParam(defaultValue = "5") int size,
             Model model) {
 
-
         model.addAttribute("foodCategories", FoodCategory.values());
 
-
         model.addAttribute("totalFoodItems", foodItemService.countFoodItems());
-        
 
         model.addAttribute("totalUsers", userRepository.count());
 
         Pageable userPageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<User> recentUsersPage = userRepository.findAll(userPageable);
         model.addAttribute("recentUsers", recentUsersPage.getContent());
-
+        
         Pageable foodPageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<FoodItemDTO> recentFoodItemsPage = foodItemService.getAllFoodItems(foodPageable);
-
+        
+        model.addAttribute("size", size);
         model.addAttribute("recentFoodItems", recentFoodItemsPage.getContent());
         model.addAttribute("currentPage", recentFoodItemsPage.getNumber());
         model.addAttribute("totalPages", recentFoodItemsPage.getTotalPages());
         model.addAttribute("totalItems", recentFoodItemsPage.getTotalElements());
-        
+
         return "admin/dashboard";
     }
 
